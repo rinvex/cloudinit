@@ -36,7 +36,7 @@ apt-get update
 # Install Some Basic Packages
 
 apt-get install -y build-essential gcc git libmcrypt4 libpcre3-dev ntp unzip \
-make python2.7-dev python-pip unattended-upgrades whois vim
+make python2.7-dev python-pip unattended-upgrades whois vim letsencrypt
 
 # Set My Timezone
 
@@ -153,40 +153,40 @@ apt-get -y clean
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
 
-mkdir /etc/nginx/rinvex-conf/$1/before -p 2>/dev/null
-mkdir /etc/nginx/rinvex-conf/$1/server -p 2>/dev/null
-mkdir /etc/nginx/rinvex-conf/$1/after -p 2>/dev/null
+mkdir /etc/nginx/rinvex-conf/\$1/before -p 2>/dev/null
+mkdir /etc/nginx/rinvex-conf/\$1/server -p 2>/dev/null
+mkdir /etc/nginx/rinvex-conf/\$1/after -p 2>/dev/null
 
 block="# RINVEX CONFIG (DOT NOT REMOVE!)
-include rinvex-conf/$1/before/*;
+include rinvex-conf/\$1/before/*;
 
 server {
-    listen ${3:-80};
-    listen ${4:-443} ssl http2;
-    server_name $1;
-    root \"$2\";
+    listen \${3:-80};
+    listen \${4:-443} ssl http2;
+    server_name \$1;
+    root \"\$2\";
 
     index index.html index.htm index.php;
 
     charset utf-8;
-    
+
     # RINVEX CONFIG (DOT NOT REMOVE!)
-    include rinvex-conf/$1/server/*;
+    include rinvex-conf/\$1/server/*;
 
     location / {
-        try_files \$uri \$uri/ /index.php?\$query_string;
+        try_files \\$uri \\$uri/ /index.php?\\$query_string;
     }
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location = /robots.txt  { access_log off; log_not_found off; }
 
     access_log off;
-    error_log  /var/log/nginx/$1-error.log error;
+    error_log  /var/log/nginx/\$1-error.log error;
 
     error_page 404 /index.php;
 
-    location ~ \.php$ {
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    location ~ \.php\$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)\$;
         fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
         fastcgi_index index.php;
         include fastcgi_params;
@@ -198,11 +198,58 @@ server {
 }
 
 # RINVEX CONFIG (DOT NOT REMOVE!)
-include rinvex-conf/$1/after/*;
+include rinvex-conf/\$1/after/*;
 "
 
-echo "$block" > "/etc/nginx/sites-available/$1"
-ln -fs "/etc/nginx/sites-available/$1" "/etc/nginx/sites-enabled/$1"
+echo "\$block" > "/etc/nginx/sites-available/\$1"
+ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
+
+
+# Write letsencrypt acme challenge
+
+letsencrypt_challenge="location /.well-known/acme-challenge {
+    alias /home/rinvex/.letsencrypt;
+}
+"
+
+echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/\$1/server/letsencrypt_challenge.conf"
+
+
+# Write SSL redirection config
+
+ssl_redirect="# Redirect every request to HTTPS...
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name .\$1;
+    return 301 https://\\$host\\$request_uri;
+}
+
+# Redirect SSL to primary domain SSL...
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    # RINVEX SSL (DO NOT REMOVE!)
+    ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
+
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECD\$
+    ssl_prefer_server_ciphers on;
+    ssl_dhparam /etc/nginx/dhparams.pem;
+
+    server_name www.\$1;
+    return 301 https://\$1\\$request_uri;
+}
+"
 EOF
 
 chmod +x /usr/local/bin/serve
+
+# Prepare nginx/letsencrypt stuff
+
+mkdir /home/rinvex/.letsencrypt && chmod 755 /home/rinvex/.letsencrypt
+echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test  && chmod 644 /home/rinvex/.letsencrypt/test
+
