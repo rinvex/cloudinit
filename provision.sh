@@ -147,3 +147,62 @@ apt-get install -y sqlite3
 
 apt-get -y autoremove
 apt-get -y clean
+
+# Write some scripts
+
+cat > /usr/local/bin/serve << EOF
+#!/usr/bin/env bash
+
+mkdir /etc/nginx/rinvex-conf/$1/before -p 2>/dev/null
+mkdir /etc/nginx/rinvex-conf/$1/server -p 2>/dev/null
+mkdir /etc/nginx/rinvex-conf/$1/after -p 2>/dev/null
+
+block="# RINVEX CONFIG (DOT NOT REMOVE!)
+include rinvex-conf/$1/before/*;
+
+server {
+    listen ${3:-80};
+    listen ${4:-443} ssl http2;
+    server_name $1;
+    root \"$2\";
+
+    index index.html index.htm index.php;
+
+    charset utf-8;
+    
+    # RINVEX CONFIG (DOT NOT REMOVE!)
+    include rinvex-conf/$1/server/*;
+
+    location / {
+        try_files \$uri \$uri/ /index.php?\$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    access_log off;
+    error_log  /var/log/nginx/$1-error.log error;
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+# RINVEX CONFIG (DOT NOT REMOVE!)
+include rinvex-conf/$1/after/*;
+"
+
+echo "$block" > "/etc/nginx/sites-available/$1"
+ln -fs "/etc/nginx/sites-available/$1" "/etc/nginx/sites-enabled/$1"
+EOF
+
+chmod +x /usr/local/bin/serve
