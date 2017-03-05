@@ -244,6 +244,12 @@ server {
     return 301 https://\$1\\$request_uri;
 }
 "
+
+echo "\$ssl_redirect" > "/etc/nginx/rinvex-conf/\$1/before/ssl_redirect.conf"
+
+# Generate a new letsencrypt certificate
+letsencrypt certonly --agree-tos -q -m support@\$1 --webroot -w \$2 -d \$1 -d www.\$1
+
 EOF
 
 chmod +x /usr/local/bin/serve
@@ -251,5 +257,4 @@ chmod +x /usr/local/bin/serve
 # Prepare nginx/letsencrypt stuff
 
 mkdir /home/rinvex/.letsencrypt && chmod 755 /home/rinvex/.letsencrypt
-echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test  && chmod 644 /home/rinvex/.letsencrypt/test
-
+echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test && chmod 644 /home/rinvex/.letsencrypt/test
