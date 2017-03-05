@@ -174,7 +174,7 @@ server {
     include rinvex-conf/\$1/server/*;
 
     location / {
-        try_files \\$uri \\$uri/ /index.php?\\$query_string;
+        try_files \\\$uri \\\$uri/ /index.php?\\\$query_string;
     }
 
     location = /favicon.ico { access_log off; log_not_found off; }
@@ -223,7 +223,7 @@ server {
     listen [::]:80;
 
     server_name .\$1;
-    return 301 https://\\$host\\$request_uri;
+    return 301 https://\\\$host\\\$request_uri;
 }
 
 # Redirect SSL to primary domain SSL...
@@ -241,7 +241,7 @@ server {
     ssl_dhparam /etc/nginx/dhparams.pem;
 
     server_name www.\$1;
-    return 301 https://\$1\\$request_uri;
+    return 301 https://\$1\\\$request_uri;
 }
 "
 
@@ -255,6 +255,5 @@ EOF
 chmod +x /usr/local/bin/serve
 
 # Prepare nginx/letsencrypt stuff
-
 mkdir /home/rinvex/.letsencrypt && chmod 755 /home/rinvex/.letsencrypt
 echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test && chmod 644 /home/rinvex/.letsencrypt/test
