@@ -126,7 +126,7 @@ mkdir /home/rinvex/.letsencrypt && chmod 755 /home/rinvex/.letsencrypt
 echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test && chmod 644 /home/rinvex/.letsencrypt/test
 
 # Add letsencrypt cronjob
-crontab -l | { cat; echo "0 */12 * * * letsencrypt renew --agree-tos >> /var/log/letsencrypt-renew.log"; } | crontab -
+crontab -l | { cat; echo "0 */12 * * * letsencrypt renew --agree-tos >> /var/log/letsencrypt/letsencrypt-renew.log"; } | crontab -
 
 # Write letsencrypt acme challenge test file
 letsencrypt_challenge="location /.well-known/acme-challenge {
