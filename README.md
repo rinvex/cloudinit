@@ -1,5 +1,7 @@
 # cloud-init
 
+When provisioning a new Ubuntu 16.04 server on the cloud, write the following code in the **User data** field at your cloud service provider provisioning page. This is applicable for both AWS EC2 & DigitalOcean Droplet instances:
+
 ```shell
 #cloud-config
 system_info:
@@ -10,3 +12,15 @@ runcmd:
   - chmod +x provision.sh
   - ./provision.sh
 ```
+
+> **Notes:**
+
+> 1. Some configurations has been ommitted since the default AWS Ubuntu AMI, and the default DigitalOcean Ubuntu Droplet has these config by default.
+> 2. Notice that the provisioning script uses **rinvex** as a default user system-wide, change if required.
+> 3. References: 
+>   - http://cloudinit.readthedocs.io/en/latest/topics/examples.html
+>   - http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
+>   - http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
+>   - https://www.digitalocean.com/community/tutorials/an-introduction-to-droplet-metadata
+>   - https://www.digitalocean.com/community/tutorials/an-introduction-to-cloud-config-scripting
+>   - https://www.digitalocean.com/community/tutorials/how-to-use-cloud-config-for-your-initial-server-setup
