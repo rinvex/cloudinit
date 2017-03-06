@@ -126,6 +126,9 @@ sed -i "s/listen\.owner.*/listen.owner = rinvex/" /etc/php/7.1/fpm/pool.d/www.co
 sed -i "s/listen\.group.*/listen.group = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
 
+# Generate Strong Diffie-Hellman Group
+openssl dhparam -out /etc/nginx/dhparam.pem 2048
+
 service nginx restart
 service php7.1-fpm restart
 
@@ -148,10 +151,13 @@ apt-get install -y sqlite3
 apt-get -y autoremove
 apt-get -y clean
 
-# Write some scripts
-
+# Write serve script
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
+
+sudo su
+
+echo "Creating nginx configuration files..."
 
 mkdir /etc/nginx/rinvex-conf/\$1/before -p 2>/dev/null
 mkdir /etc/nginx/rinvex-conf/\$1/server -p 2>/dev/null
@@ -205,6 +211,8 @@ echo "\$block" > "/etc/nginx/sites-available/\$1"
 ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
 
+echo "Generating letsencrypt certificate..."
+
 # Generate a new letsencrypt certificate
 letsencrypt certonly --webroot -w \$2 -d \$1 -d www.\$1 --agree-tos -m support@\$1
 
@@ -218,11 +226,7 @@ letsencrypt_challenge="location /.well-known/acme-challenge {
 echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/\$1/server/letsencrypt_challenge.conf"
 
 
-# Generate Strong Diffie-Hellman Group
-sudo openssl dhparam -out /etc/nginx/dhparam.pem 2048
-
 # Write SSL redirection config
-
 ssl_redirect="# Redirect every request to HTTPS...
 server {
     listen 80;
@@ -234,6 +238,8 @@ server {
 
 # Redirect SSL to primary domain SSL...
 server {
+    # Based on Mozilla SSL Configuration Generator
+    # https://mozilla.github.io/server-side-tls/ssl-config-generator/
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
 
@@ -254,9 +260,9 @@ server {
 
     # HSTS and other security headers (ngx_http_headers_module is required) (15768000 seconds = 6 months)
     add_header Strict-Transport-Security max-age=15768000;
-    add_header X-Frame-Options "SAMEORIGIN";
-    add_header X-XSS-Protection "1; mode=block";
-    add_header X-Content-Type-Options "nosniff";
+    add_header X-Frame-Options \"SAMEORIGIN\";
+    add_header X-XSS-Protection \"1; mode=block\";
+    add_header X-Content-Type-Options \"nosniff\";
 
     # OCSP Stapling ---
     # fetch OCSP records from URL in ssl_certificate and cache them
@@ -277,8 +283,11 @@ server {
 
 echo "\$ssl_redirect" > "/etc/nginx/rinvex-conf/\$1/before/ssl_redirect.conf"
 
+echo "Restarting nginx server..."
+
 service nginx restart
 
+echo "Done!"
 EOF
 
 chmod +x /usr/local/bin/serve
