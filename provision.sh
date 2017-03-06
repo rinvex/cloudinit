@@ -57,6 +57,9 @@ sudo su rinvex <<'EOF'
 /usr/local/bin/composer global require "laravel/installer=~1.1"
 EOF
 
+# Hide nginx server version
+sed -i "s/# server_tokens off;/server_tokens off;/" /etc/nginx/nginx.conf
+
 # Set Some PHP CLI Settings
 sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/cli/php.ini
 sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/cli/php.ini
