@@ -3,26 +3,22 @@
 export DEBIAN_FRONTEND=noninteractive
 
 # Update Package List
-
 apt-get update
 
 # Update System Packages
 apt-get -y upgrade
 
 # Force Locale
-
 echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
 locale-gen en_US.UTF-8
 
 # Setup some SSH Options
-
 sed -i "s/PermitRootLogin .*/PermitRootLogin no/" /etc/ssh/sshd_config
 
 # Restart ssh service
 /etc/init.d/ssh restart
 
 # Install Some PPAs
-
 apt-get install -y software-properties-common curl
 
 apt-add-repository ppa:nginx/stable -y
@@ -31,20 +27,16 @@ apt-add-repository ppa:ondrej/php -y
 curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
 
 # Update Package Lists
-
 apt-get update
 
 # Install Some Basic Packages
-
 apt-get install -y build-essential gcc git libmcrypt4 libpcre3-dev ntp unzip \
 make python2.7-dev python-pip unattended-upgrades whois vim letsencrypt
 
 # Set My Timezone
-
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 # Install PHP Stuffs
-
 apt-get install -y --force-yes php7.1-cli php7.1-dev \
 php7.1-pgsql php7.1-sqlite3 php7.1-gd \
 php7.1-curl php7.1-memcached \
@@ -53,30 +45,25 @@ php7.1-xml php7.1-zip php7.1-bcmath php7.1-soap \
 php7.1-intl php7.1-readline
 
 # Install Composer
-
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 
 # Add Composer Global Bin To Path
-
 printf "\nPATH=\"$(sudo su - rinvex -c 'composer config -g home 2>/dev/null')/vendor/bin:\$PATH\"\n" | tee -a /home/rinvex/.profile
 
 # Install Laravel Envoy & Installer
-
 sudo su rinvex <<'EOF'
 /usr/local/bin/composer global require "laravel/envoy=~1.0"
 /usr/local/bin/composer global require "laravel/installer=~1.1"
 EOF
 
 # Set Some PHP CLI Settings
-
 sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/cli/php.ini
 sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/cli/php.ini
 sudo sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.1/cli/php.ini
 sudo sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/cli/php.ini
 
 # Install Nginx & PHP-FPM
-
 apt-get install -y --force-yes nginx php7.1-fpm
 
 rm /etc/nginx/sites-enabled/default
@@ -86,7 +73,6 @@ rm /etc/nginx/sites-available/default
 /etc/init.d/nginx restart
 
 # Setup Some PHP-FPM Options
-
 sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/fpm/php.ini
 sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/fpm/php.ini
 sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.1/fpm/php.ini
@@ -94,7 +80,6 @@ sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.1/fpm/php.ini
 sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/fpm/php.ini
 
 # Copy fastcgi_params to Nginx because they broke it on the PPA
-
 cat > /etc/nginx/fastcgi_params << EOF
 fastcgi_param    QUERY_STRING        \$query_string;
 fastcgi_param    REQUEST_METHOD        \$request_method;
@@ -118,7 +103,6 @@ fastcgi_param    REDIRECT_STATUS        200;
 EOF
 
 # Set The Nginx & PHP-FPM User
-
 sed -i "s/user www-data;/user rinvex;/" /etc/nginx/nginx.conf
 sed -i "s/# server_names_hash_bucket_size.*/server_names_hash_bucket_size 64;/" /etc/nginx/nginx.conf
 
@@ -153,21 +137,17 @@ echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/global/server/letsencry
 /etc/init.d/php7.1-fpm restart
 
 # Add User To WWW-Data
-
 usermod -a -G www-data rinvex
 id rinvex
 groups rinvex
 
 # Install Node
-
 apt-get install -y nodejs
 
 # Install SQLite
-
 apt-get install -y sqlite3
 
 # Clean Up
-
 apt-get -y autoremove
 apt-get -y clean
 
