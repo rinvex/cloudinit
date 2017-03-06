@@ -93,25 +93,25 @@ sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/fpm/php.ini
 # Copy fastcgi_params to Nginx because they broke it on the PPA
 
 cat > /etc/nginx/fastcgi_params << EOF
-fastcgi_param	QUERY_STRING		\$query_string;
-fastcgi_param	REQUEST_METHOD		\$request_method;
-fastcgi_param	CONTENT_TYPE		\$content_type;
-fastcgi_param	CONTENT_LENGTH		\$content_length;
-fastcgi_param	SCRIPT_FILENAME		\$request_filename;
-fastcgi_param	SCRIPT_NAME		\$fastcgi_script_name;
-fastcgi_param	REQUEST_URI		\$request_uri;
-fastcgi_param	DOCUMENT_URI		\$document_uri;
-fastcgi_param	DOCUMENT_ROOT		\$document_root;
-fastcgi_param	SERVER_PROTOCOL		\$server_protocol;
-fastcgi_param	GATEWAY_INTERFACE	CGI/1.1;
-fastcgi_param	SERVER_SOFTWARE		nginx/\$nginx_version;
-fastcgi_param	REMOTE_ADDR		\$remote_addr;
-fastcgi_param	REMOTE_PORT		\$remote_port;
-fastcgi_param	SERVER_ADDR		\$server_addr;
-fastcgi_param	SERVER_PORT		\$server_port;
-fastcgi_param	SERVER_NAME		\$server_name;
-fastcgi_param	HTTPS			\$https if_not_empty;
-fastcgi_param	REDIRECT_STATUS		200;
+fastcgi_param    QUERY_STRING        \$query_string;
+fastcgi_param    REQUEST_METHOD        \$request_method;
+fastcgi_param    CONTENT_TYPE        \$content_type;
+fastcgi_param    CONTENT_LENGTH        \$content_length;
+fastcgi_param    SCRIPT_FILENAME        \$request_filename;
+fastcgi_param    SCRIPT_NAME        \$fastcgi_script_name;
+fastcgi_param    REQUEST_URI        \$request_uri;
+fastcgi_param    DOCUMENT_URI        \$document_uri;
+fastcgi_param    DOCUMENT_ROOT        \$document_root;
+fastcgi_param    SERVER_PROTOCOL        \$server_protocol;
+fastcgi_param    GATEWAY_INTERFACE    CGI/1.1;
+fastcgi_param    SERVER_SOFTWARE        nginx/\$nginx_version;
+fastcgi_param    REMOTE_ADDR        \$remote_addr;
+fastcgi_param    REMOTE_PORT        \$remote_port;
+fastcgi_param    SERVER_ADDR        \$server_addr;
+fastcgi_param    SERVER_PORT        \$server_port;
+fastcgi_param    SERVER_NAME        \$server_name;
+fastcgi_param    HTTPS            \$https if_not_empty;
+fastcgi_param    REDIRECT_STATUS        200;
 EOF
 
 # Set The Nginx & PHP-FPM User
@@ -205,8 +205,11 @@ echo "\$block" > "/etc/nginx/sites-available/\$1"
 ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
 
-# Write letsencrypt acme challenge
+# Generate a new letsencrypt certificate
+letsencrypt certonly --webroot -w \$2 -d \$1 -d www.\$1 --agree-tos -m support@\$1
 
+
+# Write letsencrypt acme challenge
 letsencrypt_challenge="location /.well-known/acme-challenge {
     alias /home/rinvex/.letsencrypt;
 }
@@ -214,6 +217,9 @@ letsencrypt_challenge="location /.well-known/acme-challenge {
 
 echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/\$1/server/letsencrypt_challenge.conf"
 
+
+# Generate Strong Diffie-Hellman Group
+sudo openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
 # Write SSL redirection config
 
@@ -231,14 +237,38 @@ server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
 
-    # RINVEX SSL (DO NOT REMOVE!)
+    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
 
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    ssl_dhparam /etc/nginx/dhparam.pem;
+
+    # intermediate configuration. tweak to your needs.
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECD\$
+    ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
     ssl_prefer_server_ciphers on;
-    ssl_dhparam /etc/nginx/dhparams.pem;
+
+    # HSTS and other security headers (ngx_http_headers_module is required) (15768000 seconds = 6 months)
+    add_header Strict-Transport-Security max-age=15768000;
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    ## verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
+
+    # Use Google DNS servers for upstream dns resolving
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
 
     server_name www.\$1;
     return 301 https://\$1\\\$request_uri;
@@ -247,8 +277,7 @@ server {
 
 echo "\$ssl_redirect" > "/etc/nginx/rinvex-conf/\$1/before/ssl_redirect.conf"
 
-# Generate a new letsencrypt certificate
-letsencrypt certonly --agree-tos -q -m support@\$1 --webroot -w \$2 -d \$1 -d www.\$1
+service nginx restart
 
 EOF
 
