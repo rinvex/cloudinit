@@ -18,7 +18,8 @@ locale-gen en_US.UTF-8
 
 sed -i "s/PermitRootLogin .*/PermitRootLogin no/" /etc/ssh/sshd_config
 
-service ssh restart
+# Restart ssh service
+/etc/init.d/ssh restart
 
 # Install Some PPAs
 
@@ -80,7 +81,9 @@ apt-get install -y --force-yes nginx php7.1-fpm
 
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-service nginx restart
+
+# Restart nginx service
+/etc/init.d/nginx restart
 
 # Setup Some PHP-FPM Options
 
@@ -145,9 +148,9 @@ letsencrypt_challenge="location /.well-known/acme-challenge {
 "
 echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/global/server/letsencrypt_challenge.conf"
 
-# Restart services
-service nginx restart
-service php7.1-fpm restart
+# Restart nginx and php7.1-fpm services
+/etc/init.d/nginx restart
+/etc/init.d/php7.1-fpm restart
 
 # Add User To WWW-Data
 
@@ -172,15 +175,13 @@ apt-get -y clean
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
 
-sudo su
-
 echo "Creating nginx configuration files..."
 
 mkdir /etc/nginx/rinvex-conf/\$1/before -p 2>/dev/null
 mkdir /etc/nginx/rinvex-conf/\$1/server -p 2>/dev/null
 mkdir /etc/nginx/rinvex-conf/\$1/after -p 2>/dev/null
 
-block="# RINVEX CONFIG (DOT NOT REMOVE!)
+block="# RINVEX HOOKS (DOT NOT REMOVE!)
 include rinvex-conf/global/before/*;
 include rinvex-conf/\$1/before/*;
 
@@ -194,7 +195,7 @@ server {
 
     charset utf-8;
 
-    # RINVEX CONFIG (DOT NOT REMOVE!)
+    # RINVEX HOOKS (DOT NOT REMOVE!)
     include rinvex-conf/global/server/*;
     include rinvex-conf/\$1/server/*;
 
@@ -222,7 +223,7 @@ server {
     }
 }
 
-# RINVEX CONFIG (DOT NOT REMOVE!)
+# RINVEX HOOKS (DOT NOT REMOVE!)
 include rinvex-conf/global/after/*;
 include rinvex-conf/\$1/after/*;
 "
@@ -230,18 +231,18 @@ include rinvex-conf/\$1/after/*;
 echo "\$block" > "/etc/nginx/sites-available/\$1"
 ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
-
-echo "Generating letsencrypt certificate..."
+# Restart nginx service
+/etc/init.d/nginx restart
 
 # Generate a new letsencrypt certificate
+echo "Generating letsencrypt certificate..."
 letsencrypt certonly --webroot -w \$2 -d \$1 -d www.\$1 --agree-tos -m support@\$1
-
 
 # Write SSL redirection config
 ssl_redirect="# Redirect every request to HTTPS...
 server {
-    listen 80;
-    listen [::]:80;
+    listen \${3:-80};
+    listen [::]:\${3:-80};
 
     server_name .\$1;
     return 301 https://\\\$host\\\$request_uri;
@@ -251,8 +252,8 @@ server {
 server {
     # Based on Mozilla SSL Configuration Generator
     # https://mozilla.github.io/server-side-tls/ssl-config-generator/
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
+    listen \${4:-443} ssl http2;
+    listen [::]:\${4:-443} ssl http2;
 
     # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
@@ -294,9 +295,8 @@ server {
 
 echo "\$ssl_redirect" > "/etc/nginx/rinvex-conf/\$1/before/ssl_redirect.conf"
 
-echo "Restarting nginx server..."
-
-service nginx restart
+# Restart nginx service
+/etc/init.d/nginx restart
 
 echo "Done!"
 EOF
