@@ -129,6 +129,23 @@ sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
 # Generate Strong Diffie-Hellman Group
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
+# Create global nginx hooks folders
+mkdir /etc/nginx/rinvex-conf/global/before -p 2>/dev/null
+mkdir /etc/nginx/rinvex-conf/global/server -p 2>/dev/null
+mkdir /etc/nginx/rinvex-conf/global/after -p 2>/dev/null
+
+# Prepare letsencrypt stuff
+mkdir /home/rinvex/.letsencrypt && chmod 755 /home/rinvex/.letsencrypt
+echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test && chmod 644 /home/rinvex/.letsencrypt/test
+
+# Write letsencrypt acme challenge test file
+letsencrypt_challenge="location /.well-known/acme-challenge {
+    alias /home/rinvex/.letsencrypt;
+}
+"
+echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/global/server/letsencrypt_challenge.conf"
+
+# Restart services
 service nginx restart
 service php7.1-fpm restart
 
@@ -164,6 +181,7 @@ mkdir /etc/nginx/rinvex-conf/\$1/server -p 2>/dev/null
 mkdir /etc/nginx/rinvex-conf/\$1/after -p 2>/dev/null
 
 block="# RINVEX CONFIG (DOT NOT REMOVE!)
+include rinvex-conf/global/before/*;
 include rinvex-conf/\$1/before/*;
 
 server {
@@ -177,6 +195,7 @@ server {
     charset utf-8;
 
     # RINVEX CONFIG (DOT NOT REMOVE!)
+    include rinvex-conf/global/server/*;
     include rinvex-conf/\$1/server/*;
 
     location / {
@@ -204,6 +223,7 @@ server {
 }
 
 # RINVEX CONFIG (DOT NOT REMOVE!)
+include rinvex-conf/global/after/*;
 include rinvex-conf/\$1/after/*;
 "
 
@@ -215,15 +235,6 @@ echo "Generating letsencrypt certificate..."
 
 # Generate a new letsencrypt certificate
 letsencrypt certonly --webroot -w \$2 -d \$1 -d www.\$1 --agree-tos -m support@\$1
-
-
-# Write letsencrypt acme challenge
-letsencrypt_challenge="location /.well-known/acme-challenge {
-    alias /home/rinvex/.letsencrypt;
-}
-"
-
-echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/\$1/server/letsencrypt_challenge.conf"
 
 
 # Write SSL redirection config
@@ -291,7 +302,3 @@ echo "Done!"
 EOF
 
 chmod +x /usr/local/bin/serve
-
-# Prepare nginx/letsencrypt stuff
-mkdir /home/rinvex/.letsencrypt && chmod 755 /home/rinvex/.letsencrypt
-echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test && chmod 644 /home/rinvex/.letsencrypt/test
