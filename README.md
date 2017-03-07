@@ -17,7 +17,9 @@ runcmd:
 
 > 1. Some configurations has been ommitted since the default AWS Ubuntu AMI, and the default DigitalOcean Ubuntu Droplet has these config by default.
 > 2. Notice that the provisioning script uses **rinvex** as a default user system-wide, change if required.
-> 3. References: 
+> 3. This is intended to be just web server, that's why no database or other software config included.
+> 4. Tested only in AWS EC2 Ubuntu 16.04, but should work with DigitalOcean droplets as well.
+> 5. References: 
 >   - http://cloudinit.readthedocs.io/en/latest/topics/examples.html
 >   - http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 >   - http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
