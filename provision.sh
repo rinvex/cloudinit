@@ -157,7 +157,8 @@ apt-get install -y sqlite3
 apt-get -y autoremove
 apt-get -y clean
 
-# Write serve script
+# Write serve script (new virtual host)
+# Usage: serve domain.ext /home/user/path
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
 
