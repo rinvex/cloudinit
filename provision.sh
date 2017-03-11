@@ -119,7 +119,6 @@ sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
 # Generate Strong Diffie-Hellman Group
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
-sudo su rinvex <<'EOF'
 # Create global nginx hooks folders
 mkdir /etc/nginx/rinvex-conf/global/before -p 2>/dev/null
 mkdir /etc/nginx/rinvex-conf/global/server -p 2>/dev/null
@@ -129,15 +128,16 @@ mkdir /etc/nginx/rinvex-conf/global/after -p 2>/dev/null
 mkdir /home/rinvex/.letsencrypt && chmod 755 /home/rinvex/.letsencrypt
 echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test && chmod 644 /home/rinvex/.letsencrypt/test
 
-# Add letsencrypt cronjob
-crontab -l | { cat; echo "0 */12 * * * letsencrypt renew --agree-tos >> /var/log/letsencrypt/letsencrypt-renew.log"; } | crontab -
-
 # Write letsencrypt acme challenge test file
 letsencrypt_challenge="location /.well-known/acme-challenge {
     alias /home/rinvex/.letsencrypt;
 }
 "
 echo "$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/global/server/letsencrypt_challenge.conf"
+
+# Add letsencrypt cronjob
+sudo su rinvex <<'EOF'
+crontab -l | { cat; echo "0 */12 * * * letsencrypt renew --agree-tos >> /var/log/letsencrypt/letsencrypt-renew.log"; } | crontab -
 EOF
 
 # Restart nginx and php7.1-fpm services
