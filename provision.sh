@@ -57,6 +57,13 @@ sudo su rinvex <<'EOF'
 /usr/local/bin/composer global require "laravel/installer=~1.1"
 EOF
 
+# Install Nginx & PHP-FPM
+apt-get install -y --force-yes nginx php7.1-fpm
+
+# Remove default nginx host
+rm /etc/nginx/sites-enabled/default
+rm /etc/nginx/sites-available/default
+
 # Hide nginx server version
 sed -i "s/# server_tokens off;/server_tokens off;/" /etc/nginx/nginx.conf
 
@@ -65,12 +72,6 @@ sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/cli/php.in
 sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/cli/php.ini
 sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.1/cli/php.ini
 sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/cli/php.ini
-
-# Install Nginx & PHP-FPM
-apt-get install -y --force-yes nginx php7.1-fpm
-
-rm /etc/nginx/sites-enabled/default
-rm /etc/nginx/sites-available/default
 
 # Restart nginx service
 /etc/init.d/nginx restart
