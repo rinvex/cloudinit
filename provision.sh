@@ -157,7 +157,7 @@ apt-get install -y sqlite3
 apt-get -y autoremove
 apt-get -y clean
 
-# Write serve script (new virtual host)
+# Write serve script (add virtual host)
 # Usage: serve domain.ext /home/user/path
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
@@ -299,3 +299,31 @@ EOF
 
 chmod +x /usr/local/bin/serve
 
+
+# Write unserve script (remove virtual host)
+# Usage: unserve domain.ext
+cat > /usr/local/bin/unserve << EOF
+#!/usr/bin/env bash
+
+if [ \$# -eq 0 ] || [ -z "\$1" ]; then
+    echo "Invalid arguments provided! Usage: serve domain.ext"
+    exit 1
+fi
+
+echo "Removing letsencrypt..."
+rm -rvf /etc/letsencrypt/live/\$1
+rm -rvf /etc/letsencrypt/archive/\$1
+rm -rvf /etc/letsencrypt/renewal/\$1.conf
+
+echo "Removing virtual host..."
+rm -rvf /etc/nginx/rinvex-conf/\$1
+rm -rvf /etc/nginx/sites-enabled/\$1
+rm -rvf /etc/nginx/sites-available/\$1
+
+# Restart nginx service
+/etc/init.d/nginx restart
+
+echo "Done!"
+EOF
+
+chmod +x /usr/local/bin/unserve
