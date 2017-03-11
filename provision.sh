@@ -119,6 +119,7 @@ sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
 # Generate Strong Diffie-Hellman Group
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
+sudo su rinvex <<'EOF'
 # Create global nginx hooks folders
 mkdir /etc/nginx/rinvex-conf/global/before -p 2>/dev/null
 mkdir /etc/nginx/rinvex-conf/global/server -p 2>/dev/null
@@ -137,6 +138,7 @@ letsencrypt_challenge="location /.well-known/acme-challenge {
 }
 "
 echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/global/server/letsencrypt_challenge.conf"
+EOF
 
 # Restart nginx and php7.1-fpm services
 /etc/init.d/nginx restart
