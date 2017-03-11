@@ -30,7 +30,7 @@ curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
 apt-get update
 
 # Install Some Basic Packages
-apt-get install -y \
+apt-get install -y --allow-unauthenticated \
 build-essential gcc libmcrypt4 libpcre3-dev ntp unzip \
 make python2.7-dev python-pip whois letsencrypt \
 php7.1-cli php7.1-dev \
