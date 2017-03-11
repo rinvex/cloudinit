@@ -220,12 +220,12 @@ include rinvex-conf/\$1/after/*;
 echo "\$block" > "/etc/nginx/sites-available/\$1"
 ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
-# Restart nginx service
-/etc/init.d/nginx restart
+# Stop nginx service
+/etc/init.d/nginx stop
 
 # Generate a new letsencrypt certificate
 echo "Generating letsencrypt certificate..."
-letsencrypt certonly --webroot -w \$2 -d \$1 -d www.\$1 --agree-tos -m support@\$1
+letsencrypt certonly --standalone -w \$2 -d \$1 -d www.\$1 --agree-tos -m support@\$1
 
 # Write SSL redirection config
 ssl_redirect="# Redirect every request to HTTPS...
@@ -288,8 +288,8 @@ add_header X-Content-Type-Options \"nosniff\";
 
 echo "\$server_headers" > "/etc/nginx/rinvex-conf/\$1/server/server_headers.conf"
 
-# Restart nginx service
-/etc/init.d/nginx restart
+# Start nginx service
+/etc/init.d/nginx start
 
 echo "Done!"
 EOF
