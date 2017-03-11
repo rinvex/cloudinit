@@ -42,8 +42,7 @@ php7.1-intl php7.1-readline \
 php7.1-fpm nginx sqlite3 nodejs
 
 # Install Composer
-curl -sS https://getcomposer.org/installer | sudo php -ddisplay_error=1 -derror_reporting=-1 -derror_log=none --install-dir=/usr/local/bin --filename=composer
-# curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+cd ~ && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Add Composer Global Bin To Path
 printf "\nPATH=\"$(sudo su - rinvex -c 'composer config -g home 2>/dev/null')/vendor/bin:\$PATH\"\n" | tee -a /home/rinvex/.profile
