@@ -12,6 +12,9 @@ apt-get -y upgrade
 echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
 locale-gen en_US.UTF-8
 
+# Set My Timezone
+ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+
 # Setup some SSH Options
 sed -i "s/PermitRootLogin .*/PermitRootLogin no/" /etc/ssh/sshd_config
 
@@ -19,30 +22,25 @@ sed -i "s/PermitRootLogin .*/PermitRootLogin no/" /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 
 # Install Some PPAs
-apt-get install -y software-properties-common curl
-
 apt-add-repository ppa:nginx/stable -y
 apt-add-repository ppa:ondrej/php -y
-
 curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
 
 # Update Package Lists
 apt-get update
 
 # Install Some Basic Packages
-apt-get install -y build-essential gcc git libmcrypt4 libpcre3-dev ntp unzip \
-make python2.7-dev python-pip unattended-upgrades whois vim letsencrypt
-
-# Set My Timezone
-ln -sf /usr/share/zoneinfo/UTC /etc/localtime
-
-# Install PHP Stuffs
-apt-get install -y --force-yes php7.1-cli php7.1-dev \
+apt-get install -y \
+software-properties-common curl \
+build-essential gcc git libmcrypt4 libpcre3-dev ntp unzip \
+make python2.7-dev python-pip unattended-upgrades whois vim letsencrypt \
+php7.1-cli php7.1-dev \
 php7.1-pgsql php7.1-sqlite3 php7.1-gd \
 php7.1-curl php7.1-memcached \
 php7.1-imap php7.1-mysql php7.1-mbstring \
 php7.1-xml php7.1-zip php7.1-bcmath php7.1-soap \
-php7.1-intl php7.1-readline
+php7.1-intl php7.1-readline \
+php7.1-fpm nginx sqlite3 nodejs
 
 # Install Composer
 curl -sS https://getcomposer.org/installer | php
@@ -57,24 +55,15 @@ sudo su rinvex <<'EOF'
 /usr/local/bin/composer global require "laravel/installer=~1.1"
 EOF
 
-# Install Nginx & PHP-FPM
-apt-get install -y --force-yes nginx php7.1-fpm
-
 # Remove default nginx host
-rm /etc/nginx/sites-enabled/default
-rm /etc/nginx/sites-available/default
-
-# Hide nginx server version
-sed -i "s/# server_tokens off;/server_tokens off;/" /etc/nginx/nginx.conf
+rm -rvf /etc/nginx/sites-enabled/default
+rm -rvf /etc/nginx/sites-available/default
 
 # Set Some PHP CLI Settings
 sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/cli/php.ini
 sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/cli/php.ini
 sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.1/cli/php.ini
 sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/cli/php.ini
-
-# Restart nginx service
-/etc/init.d/nginx restart
 
 # Setup Some PHP-FPM Options
 sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/fpm/php.ini
@@ -86,24 +75,24 @@ sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/fpm/php.ini
 # Copy fastcgi_params to Nginx because they broke it on the PPA
 cat > /etc/nginx/fastcgi_params << EOF
 fastcgi_param    QUERY_STRING        \$query_string;
-fastcgi_param    REQUEST_METHOD        \$request_method;
+fastcgi_param    REQUEST_METHOD      \$request_method;
 fastcgi_param    CONTENT_TYPE        \$content_type;
-fastcgi_param    CONTENT_LENGTH        \$content_length;
-fastcgi_param    SCRIPT_FILENAME        \$request_filename;
-fastcgi_param    SCRIPT_NAME        \$fastcgi_script_name;
-fastcgi_param    REQUEST_URI        \$request_uri;
+fastcgi_param    CONTENT_LENGTH      \$content_length;
+fastcgi_param    SCRIPT_FILENAME     \$request_filename;
+fastcgi_param    SCRIPT_NAME         \$fastcgi_script_name;
+fastcgi_param    REQUEST_URI         \$request_uri;
 fastcgi_param    DOCUMENT_URI        \$document_uri;
-fastcgi_param    DOCUMENT_ROOT        \$document_root;
-fastcgi_param    SERVER_PROTOCOL        \$server_protocol;
-fastcgi_param    GATEWAY_INTERFACE    CGI/1.1;
-fastcgi_param    SERVER_SOFTWARE        nginx/\$nginx_version;
-fastcgi_param    REMOTE_ADDR        \$remote_addr;
-fastcgi_param    REMOTE_PORT        \$remote_port;
-fastcgi_param    SERVER_ADDR        \$server_addr;
-fastcgi_param    SERVER_PORT        \$server_port;
-fastcgi_param    SERVER_NAME        \$server_name;
-fastcgi_param    HTTPS            \$https if_not_empty;
-fastcgi_param    REDIRECT_STATUS        200;
+fastcgi_param    DOCUMENT_ROOT       \$document_root;
+fastcgi_param    SERVER_PROTOCOL     \$server_protocol;
+fastcgi_param    GATEWAY_INTERFACE   CGI/1.1;
+fastcgi_param    SERVER_SOFTWARE     nginx/\$nginx_version;
+fastcgi_param    REMOTE_ADDR         \$remote_addr;
+fastcgi_param    REMOTE_PORT         \$remote_port;
+fastcgi_param    SERVER_ADDR         \$server_addr;
+fastcgi_param    SERVER_PORT         \$server_port;
+fastcgi_param    SERVER_NAME         \$server_name;
+fastcgi_param    HTTPS               \$https if_not_empty;
+fastcgi_param    REDIRECT_STATUS     200;
 EOF
 
 # Set The Nginx & PHP-FPM User
@@ -116,6 +105,9 @@ sed -i "s/group = www-data/group = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 sed -i "s/listen\.owner.*/listen.owner = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 sed -i "s/listen\.group.*/listen.group = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
+
+# Restart nginx service
+/etc/init.d/nginx restart
 
 # Generate Strong Diffie-Hellman Group
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
@@ -149,12 +141,6 @@ EOF
 usermod -a -G www-data rinvex
 id rinvex
 groups rinvex
-
-# Install Node
-apt-get install -y nodejs
-
-# Install SQLite
-apt-get install -y sqlite3
 
 # Clean Up
 apt-get -y autoremove
