@@ -19,7 +19,8 @@ runcmd:
 > 2. Notice that the provisioning script uses **rinvex** as a default user system-wide, change if required.
 > 3. This is intended to be just web server, that's why no database or other software config included.
 > 4. Tested only in AWS EC2 Ubuntu 16.04, but should work with DigitalOcean droplets as well.
-> 5. References: 
+> 5. Log file found on provisioned server here: `/var/log/cloud-init-output.log`
+> 6. References: 
 >   - http://cloudinit.readthedocs.io/en/latest/topics/examples.html
 >   - http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 >   - http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
