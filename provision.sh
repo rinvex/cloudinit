@@ -154,7 +154,12 @@ apt-get -y clean
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
 
-if [ \$# -eq 0 ] || [ -z "\$1" ] || [ -z "\$2" ]; then
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
+if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
     echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory"
     exit 1
 fi
@@ -297,7 +302,12 @@ chmod +x /usr/local/bin/serve
 cat > /usr/local/bin/unserve << EOF
 #!/usr/bin/env bash
 
-if [ \$# -eq 0 ] || [ -z "\$1" ]; then
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
+if [[ \$# -eq 0 ]] || [[ -z "\$1" ]]; then
     echo "Invalid arguments provided! Usage: serve domain.ext"
     exit 1
 fi
