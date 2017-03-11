@@ -42,15 +42,12 @@ php7.1-intl php7.1-readline \
 php7.1-fpm nginx sqlite3 nodejs
 
 # Install Composer
-export HOME="/home/rinvex"
-sudo su rinvex <<'EOF'
-cd ~ && curl -sS https://getcomposer.org/installer | php
-EOF
-
+wget https://getcomposer.org/composer.phar
 mv composer.phar /usr/local/bin/composer
+chmod +x /usr/local/bin/composer
 
 # Add Composer Global Bin To Path
-printf "\nPATH=\"$(sudo su - rinvex -c 'composer config -g home 2>/dev/null')/vendor/bin:\$PATH\"\n" | tee -a /home/rinvex/.profile
+printf "\nPATH=\"/home/rinvex/.composer/vendor/bin:\$PATH\"\n" | tee -a /home/rinvex/.profile
 
 # Install Laravel Envoy & Installer
 sudo su rinvex <<'EOF'
