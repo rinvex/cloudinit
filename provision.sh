@@ -162,6 +162,11 @@ apt-get -y clean
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
 
+if [ \$# -eq 0 ] || [ -z "\$1" ] || [ -z "\$2" ]; then
+    echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory"
+    exit 1
+fi
+
 echo "Creating nginx configuration files..."
 
 mkdir /etc/nginx/rinvex-conf/\$1/before -p 2>/dev/null
@@ -293,3 +298,4 @@ echo "Done!"
 EOF
 
 chmod +x /usr/local/bin/serve
+
