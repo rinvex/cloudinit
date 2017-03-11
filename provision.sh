@@ -137,7 +137,7 @@ letsencrypt_challenge="location /.well-known/acme-challenge {
     alias /home/rinvex/.letsencrypt;
 }
 "
-echo "\$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/global/server/letsencrypt_challenge.conf"
+echo "$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/global/server/letsencrypt_challenge.conf"
 EOF
 
 # Restart nginx and php7.1-fpm services
