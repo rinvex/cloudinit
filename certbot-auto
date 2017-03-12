@@ -238,7 +238,7 @@ BootstrapDebCommon() {
   AUGVERSION=`LC_ALL=C apt-cache show --no-all-versions libaugeas0 | grep ^Version: | cut -d" " -f2`
 
   if [ "$ASSUME_YES" = 1 ]; then
-    YES_FLAG="-y"
+    YES_FLAG="-y --allow-unauthenticated"
   fi
 
   AddBackportRepo() {
