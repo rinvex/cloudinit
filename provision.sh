@@ -32,7 +32,7 @@ apt-get update
 # Install Some Basic Packages
 apt-get install -y --allow-unauthenticated \
 build-essential gcc libmcrypt4 libpcre3-dev ntp unzip \
-make python2.7-dev python-pip whois gnupg2 \
+make python2.7-dev python-pip whois letsencrypt \
 php7.1-cli php7.1-dev \
 php7.1-pgsql php7.1-sqlite3 php7.1-gd \
 php7.1-curl php7.1-memcached \
