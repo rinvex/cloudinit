@@ -43,7 +43,7 @@ php7.1-fpm nginx sqlite3 nodejs
 
 # Install certbot
 echo "Installing Certbot..."
-wget https://dl.eff.org/certbot-auto -O /usr/local/bin/certbot-auto
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/certbot-auto -O /usr/local/bin/certbot-auto
 chmod a+x /usr/local/bin/certbot-auto
 
 # Install Composer
