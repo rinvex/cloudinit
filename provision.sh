@@ -32,7 +32,7 @@ apt-get update
 # Install Some Basic Packages
 apt-get install -y --allow-unauthenticated \
 build-essential gcc libmcrypt4 libpcre3-dev ntp unzip \
-make python2.7-dev python-pip whois letsencrypt \
+make python2.7-dev python-pip whois \
 php7.1-cli php7.1-dev \
 php7.1-pgsql php7.1-sqlite3 php7.1-gd \
 php7.1-curl php7.1-memcached \
@@ -40,6 +40,11 @@ php7.1-imap php7.1-mysql php7.1-mbstring \
 php7.1-xml php7.1-zip php7.1-bcmath php7.1-soap \
 php7.1-intl php7.1-readline \
 php7.1-fpm nginx sqlite3 nodejs
+
+# Install certbot
+echo "Installing Certbot..."
+wget https://dl.eff.org/certbot-auto -O /usr/local/bin/certbot-auto
+chmod a+x /usr/local/bin/certbot-auto
 
 # Install Composer
 curl -sS https://getcomposer.org/installer | HOME="/home/rinvex" php -- --install-dir=/usr/local/bin --filename=composer
@@ -120,20 +125,9 @@ mkdir /etc/nginx/rinvex-conf/global/before -p 2>/dev/null
 mkdir /etc/nginx/rinvex-conf/global/server -p 2>/dev/null
 mkdir /etc/nginx/rinvex-conf/global/after -p 2>/dev/null
 
-# Prepare letsencrypt stuff
-mkdir /home/rinvex/.letsencrypt && chmod 755 /home/rinvex/.letsencrypt
-echo "RINVEX TEST FILE" > /home/rinvex/.letsencrypt/test && chmod 644 /home/rinvex/.letsencrypt/test
-
-# Write letsencrypt acme challenge test file
-letsencrypt_challenge="location /.well-known/acme-challenge {
-    alias /home/rinvex/.letsencrypt;
-}
-"
-echo "$letsencrypt_challenge" > "/etc/nginx/rinvex-conf/global/server/letsencrypt_challenge.conf"
-
 # Add letsencrypt cronjob
 sudo su rinvex <<'EOF'
-crontab -l | { cat; echo "0 */12 * * * letsencrypt renew --agree-tos >> /var/log/letsencrypt/letsencrypt-renew.log"; } | crontab -
+crontab -l | { cat; echo "0 */12 * * * certbot-auto renew --agree-tos --quiet"; } | crontab -
 EOF
 
 # Restart nginx and php7.1-fpm services
@@ -225,7 +219,7 @@ ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
 # Generate a new letsencrypt certificate
 echo "Generating letsencrypt certificate..."
-letsencrypt certonly --standalone -w \$2 -d \$1 -d www.\$1 --agree-tos -m support@\$1
+certbot-auto certonly --standalone --webroot-path \$2 --domain \$1 --domain www.\$1 --email support@\$1 --agree-tos --quiet
 
 # Write SSL redirection config
 ssl_redirect="# Redirect every request to HTTPS...
