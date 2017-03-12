@@ -45,6 +45,7 @@ php7.1-fpm nginx sqlite3 nodejs
 echo "Installing Certbot..."
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/certbot-auto -O /usr/local/bin/certbot-auto
 chmod a+x /usr/local/bin/certbot-auto
+certbot-auto --os-packages-only --quiet
 
 # Install Composer
 curl -sS https://getcomposer.org/installer | HOME="/home/rinvex" php -- --install-dir=/usr/local/bin --filename=composer
