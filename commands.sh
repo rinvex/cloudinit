@@ -178,3 +178,38 @@ echo "Done!"
 EOF
 
 chmod +x /usr/local/bin/unserve
+
+
+# Write deploy script
+# Usage: deploy domain.ext branch
+cat > /usr/local/bin/deploy << EOF
+#!/usr/bin/env bash
+
+if [[ $# -eq 0 ]] || [[ -z "$1" ]] || [[ -z "$2" ]]; then
+    echo "Invalid arguments provided! Usage: deploy domain.ext branch
+    exit 1
+fi
+
+cd /home/rinvex/\$1
+git pull origin \$2
+composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+[[ \$2 = 'master' ]] && environment='production' || environment='dev'
+
+npm install
+npm run $environment
+
+if [ -f artisan ]
+then
+    php artisan optimize
+    php artisan route:cache
+    php artisan config:cache
+    php artisan migrate --force
+    php artisan cache:clear
+    php artisan view:clear
+fi
+
+echo "Done!"
+EOF
+
+chmod +x /usr/local/bin/deploy
