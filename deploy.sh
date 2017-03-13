@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
-cd /home/rinvex/{{DOMAIN}}
+if [[ $# -eq 0 ]] || [[ -z "$1" ]] || [[ -z "$2" ]]; then
+    echo "Invalid arguments provided! Usage: deploy domain.ext production
+    exit 1
+fi
+
+cd /home/rinvex/$1
 git pull origin master
 composer install --no-interaction --prefer-dist --optimize-autoloader
 
 npm install
-npm run {{ENVIRONMENT}}
+npm run $2
 
 if [ -f artisan ]
 then
