@@ -24,7 +24,6 @@ sed -i "s/PermitRootLogin .*/PermitRootLogin no/" /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 
 # Install Some PPAs
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
 apt-add-repository ppa:nginx/stable -y
 apt-add-repository ppa:ondrej/php -y
 curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
@@ -33,12 +32,12 @@ curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
 apt-get update
 
 # Install Some Basic Packages
-apt-get install -y build-essential gcc libmcrypt4 \
+apt-get install -y --allow-unauthenticated build-essential \
 libpcre3-dev ntp unzip make python2.7-dev python-pip whois \
 php7.1-cli php7.1-dev php7.1-pgsql php7.1-sqlite3 php7.1-gd \
 php7.1-curl php7.1-memcached php7.1-imap php7.1-mysql php7.1-mbstring \
 php7.1-xml php7.1-zip php7.1-bcmath php7.1-soap php7.1-intl php7.1-readline \
-php7.1-fpm nginx sqlite3 nodejs wkhtmltopdf
+php7.1-fpm nginx sqlite3 nodejs wkhtmltopdf gcc libmcrypt4
 
 # Install certbot
 echo "Installing Certbot..."
