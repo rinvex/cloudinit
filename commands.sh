@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Write serve script (add virtual host)
 # Usage: serve domain.ext /home/user/path
 cat > /usr/local/bin/serve << EOF
