@@ -187,7 +187,7 @@ chmod +x /usr/local/bin/unserve
 cat > /usr/local/bin/deploy << EOF
 #!/usr/bin/env bash
 
-if [[ $# -eq 0 ]] || [[ -z "$1" ]] || [[ -z "$2" ]]; then
+if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
     echo "Invalid arguments provided! Usage: deploy domain.ext branch
     exit 1
 fi
@@ -199,7 +199,7 @@ composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 [[ \$2 = 'master' ]] && environment='production' || environment='dev'
 
 npm install
-npm run $environment
+npm run \$environment
 
 if [ -f artisan ]
 then
