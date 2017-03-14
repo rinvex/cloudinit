@@ -188,7 +188,7 @@ cat > /usr/local/bin/deploy << EOF
 #!/usr/bin/env bash
 
 if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
-    echo "Invalid arguments provided! Usage: deploy domain.ext branch
+    echo "Invalid arguments provided! Usage: deploy domain.ext branch"
     exit 1
 fi
 
