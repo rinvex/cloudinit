@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Write serve script (add virtual host)
 # Usage: serve domain.ext /home/user/path
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
+
+set -e
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 
@@ -153,6 +157,8 @@ chmod +x /usr/local/bin/serve
 cat > /usr/local/bin/unserve << EOF
 #!/usr/bin/env bash
 
+set -e
+
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 
    exit 1
@@ -186,6 +192,8 @@ chmod +x /usr/local/bin/unserve
 # Usage: deploy domain.ext branch
 cat > /usr/local/bin/deploy << EOF
 #!/usr/bin/env bash
+
+set -e
 
 if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
     echo "Invalid arguments provided! Usage: deploy domain.ext branch"
