@@ -24,6 +24,7 @@ sed -i "s/PermitRootLogin .*/PermitRootLogin no/" /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 
 # Install Some PPAs
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
 apt-add-repository ppa:nginx/stable -y
 apt-add-repository ppa:ondrej/php -y
 curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
