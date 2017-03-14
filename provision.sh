@@ -13,6 +13,7 @@ apt-get -y upgrade
 # Force Locale
 echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
 locale-gen en_US.UTF-8
+export LANG=en_US.UTF-8
 
 # Set My Timezone
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
