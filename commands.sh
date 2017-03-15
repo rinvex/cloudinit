@@ -223,3 +223,37 @@ echo "Done!"
 EOF
 
 chmod +x /usr/local/bin/deploy
+
+
+# Write secure script
+# Usage: secure directory user password
+cat > /usr/local/bin/secure << EOF
+#!/usr/bin/env bash
+
+set -e
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
+if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]] || [[ -z "\$3" ]]; then
+    echo "Invalid arguments provided! Usage: secure directory user password"
+    exit 1
+fi
+
+touch .htpasswd
+echo -n '\$1:' >> /etc/nginx/.htpasswd
+openssl passwd -apr1 '\$2' >> /etc/nginx/.htpasswd
+echo >> /etc/nginx/.htpasswd
+
+echo -n 'Copy the following two auth lines into your '
+echo 'desired nginx location block to be secured:'
+echo '-------------------------'
+echo 'auth_basic "Restricted Content";'
+echo 'auth_basic_user_file /etc/nginx/.htpasswd;'
+echo '-------------------------'
+
+EOF
+
+chmod +x /usr/local/bin/secure
