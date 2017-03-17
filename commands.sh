@@ -226,7 +226,7 @@ chmod +x /usr/local/bin/deploy
 
 
 # Write secure script
-# Usage: secure directory user password
+# Usage: secure user password
 cat > /usr/local/bin/secure << EOF
 #!/usr/bin/env bash
 
@@ -237,15 +237,13 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]] || [[ -z "\$3" ]]; then
-    echo "Invalid arguments provided! Usage: secure directory user password"
+if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
+    echo "Invalid arguments provided! Usage: secure user password"
     exit 1
 fi
 
-touch .htpasswd
-echo -n '\$1:' >> /etc/nginx/.htpasswd
-openssl passwd -apr1 '\$2' >> /etc/nginx/.htpasswd
-echo >> /etc/nginx/.htpasswd
+echo -n "\$1:" >> /etc/nginx/.htpasswd
+openssl passwd -apr1 "\$2" >> /etc/nginx/.htpasswd
 
 echo -n 'Copy the following two auth lines into your '
 echo 'desired nginx location block to be secured:'
