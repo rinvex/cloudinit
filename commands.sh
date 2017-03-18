@@ -21,13 +21,13 @@ fi
 
 echo "Creating nginx configuration files..."
 
-mkdir /etc/nginx/rinvex-conf/\$1/before -p 2>/dev/null
-mkdir /etc/nginx/rinvex-conf/\$1/server -p 2>/dev/null
-mkdir /etc/nginx/rinvex-conf/\$1/after -p 2>/dev/null
+mkdir /etc/nginx/snippets/\$1/before -p 2>/dev/null
+mkdir /etc/nginx/snippets/\$1/server -p 2>/dev/null
+mkdir /etc/nginx/snippets/\$1/after -p 2>/dev/null
 
-block="# RINVEX HOOKS (DOT NOT REMOVE!)
-include rinvex-conf/global/before/*;
-include rinvex-conf/\$1/before/*;
+block="# NGINX SNIPPETS (DOT NOT REMOVE!)
+include snippets/global/before/*;
+include snippets/\$1/before/*;
 
 server {
     listen \${4:-80};
@@ -39,9 +39,9 @@ server {
 
     charset utf-8;
 
-    # RINVEX HOOKS (DOT NOT REMOVE!)
-    include rinvex-conf/global/server/*;
-    include rinvex-conf/\$1/server/*;
+    # NGINX SNIPPETS (DOT NOT REMOVE!)
+    include snippets/global/server/*;
+    include snippets/\$1/server/*;
 
     location / {
         try_files \\\$uri \\\$uri/ /index.php?\\\$query_string;
@@ -67,9 +67,9 @@ server {
     }
 }
 
-# RINVEX HOOKS (DOT NOT REMOVE!)
-include rinvex-conf/global/after/*;
-include rinvex-conf/\$1/after/*;
+# NGINX SNIPPETS (DOT NOT REMOVE!)
+include snippets/global/after/*;
+include snippets/\$1/after/*;
 "
 
 echo "\$block" > "/etc/nginx/sites-available/\$1"
@@ -131,7 +131,7 @@ server {
 }
 "
 
-echo "\$ssl_redirect" > "/etc/nginx/rinvex-conf/\$1/before/ssl_redirect.conf"
+echo "\$ssl_redirect" > "/etc/nginx/snippets/\$1/before/ssl_redirect.conf"
 
 # Write server headers
 server_headers="# HSTS and other security headers (ngx_http_headers_module is required) (15768000 seconds = 6 months)
@@ -141,7 +141,7 @@ add_header X-XSS-Protection \"1; mode=block\";
 add_header X-Content-Type-Options \"nosniff\";
 "
 
-echo "\$server_headers" > "/etc/nginx/rinvex-conf/\$1/server/server_headers.conf"
+echo "\$server_headers" > "/etc/nginx/snippets/\$1/server/server_headers.conf"
 
 # Start nginx service
 /etc/init.d/nginx start
@@ -175,7 +175,7 @@ rm -rvf /etc/letsencrypt/archive/\$1
 rm -rvf /etc/letsencrypt/renewal/\$1.conf
 
 echo "Removing virtual host..."
-rm -rvf /etc/nginx/rinvex-conf/\$1
+rm -rvf /etc/nginx/snippets/\$1
 rm -rvf /etc/nginx/sites-enabled/\$1
 rm -rvf /etc/nginx/sites-available/\$1
 
