@@ -131,6 +131,7 @@ add_header Strict-Transport-Security max-age=15768000;
 add_header X-Frame-Options \"SAMEORIGIN\";
 add_header X-XSS-Protection \"1; mode=block\";
 add_header X-Content-Type-Options \"nosniff\";
+add_header Referrer-Policy \"strict-origin-when-cross-origin\";
 "
 
 echo -n "$headers" > "/etc/nginx/snippets/global/general/headers.conf"
