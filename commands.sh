@@ -3,7 +3,7 @@
 set -e
 
 # Write serve script (add virtual host)
-# Usage: serve domain.ext /home/user/path
+# Usage: serve domain.ext /home/user/path email@domain.ext
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
 
@@ -15,7 +15,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
-    echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory"
+    echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory email@domain.ext"
     exit 1
 fi
 
@@ -30,8 +30,8 @@ include rinvex-conf/global/before/*;
 include rinvex-conf/\$1/before/*;
 
 server {
-    listen \${3:-80};
-    listen \${4:-443} ssl http2;
+    listen \${4:-80};
+    listen \${5:-443} ssl http2;
     server_name \$1;
     root \"\$2\";
 
@@ -80,13 +80,13 @@ ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
 # Generate a new letsencrypt certificate
 echo "Generating letsencrypt certificate..."
-certbot-auto certonly --standalone --webroot-path \$2 --domain \$1 --domain www.\$1 --email support@\$1 --agree-tos --quiet
+certbot-auto certonly --standalone --webroot-path \$2 --domain \$1 --domain www.\$1 --email \$3 --agree-tos
 
 # Write SSL redirection config
 ssl_redirect="# Redirect every request to HTTPS...
 server {
-    listen \${3:-80};
-    listen [::]:\${3:-80};
+    listen \${4:-80};
+    listen [::]:\${4:-80};
 
     server_name .\$1;
     return 301 https://\\\$host\\\$request_uri;
@@ -96,8 +96,8 @@ server {
 server {
     # Based on Mozilla SSL Configuration Generator
     # https://mozilla.github.io/server-side-tls/ssl-config-generator/
-    listen \${4:-443} ssl http2;
-    listen [::]:\${4:-443} ssl http2;
+    listen \${5:-443} ssl http2;
+    listen [::]:\${5:-443} ssl http2;
 
     # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
