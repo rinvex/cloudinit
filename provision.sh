@@ -133,7 +133,7 @@ add_header X-XSS-Protection \"1; mode=block\";
 add_header X-Content-Type-Options \"nosniff\";
 "
 
-echo "\$headers" > "/etc/nginx/snippets/global/general/headers.conf"
+echo "$headers" > "/etc/nginx/snippets/global/general/headers.conf"
 
 
 # Write SSL flags
@@ -158,7 +158,7 @@ ssl="
     ssl_stapling_verify on;
 "
 
-echo "\$ssl" > "/etc/nginx/snippets/global/general/ssl.conf"
+echo "$ssl" > "/etc/nginx/snippets/global/general/ssl.conf"
 
 
 # Add letsencrypt cronjob
