@@ -48,6 +48,7 @@ server {
 
   # Include nginx ssl config
   include /etc/nginx/snippets/ssl.conf;
+  include /etc/nginx/snippets/ssl-stapling.conf;
 
   # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
   ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
@@ -55,10 +56,6 @@ server {
 
   ## verify chain of trust of OCSP response using Root CA and Intermediate certs
   ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
-
-  # Use Google DNS servers for upstream dns resolving
-  resolver 8.8.8.8 8.8.4.4 valid=300s;
-  resolver_timeout 5s;
 
   # and redirect to the non-www host (declared below)
   return 301 https://\$1\\\$request_uri;
@@ -73,6 +70,7 @@ server {
 
   # Include nginx ssl config
   include /etc/nginx/snippets/ssl.conf;
+  include /etc/nginx/snippets/ssl-stapling.conf;
 
   # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
   ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
@@ -80,10 +78,6 @@ server {
 
   ## verify chain of trust of OCSP response using Root CA and Intermediate certs
   ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
-
-  # Use Google DNS servers for upstream dns resolving
-  resolver 8.8.8.8 8.8.4.4 valid=300s;
-  resolver_timeout 5s;
 
   # Path for static files
   root \$2;
