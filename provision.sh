@@ -58,9 +58,6 @@ sudo su rinvex <<'EOF'
 /usr/local/bin/composer global require "laravel/envoy=~1.0"
 /usr/local/bin/composer global require "laravel/installer=~1.1"
 EOF
-
-# Hide nginx server version
- sed -i "s/# server_tokens off;/server_tokens off;/" /etc/nginx/nginx.conf
  
 # Remove default nginx host
 rm -rvf /etc/nginx/sites-enabled/default
@@ -101,6 +98,13 @@ fastcgi_param    SERVER_NAME         \$server_name;
 fastcgi_param    HTTPS               \$https if_not_empty;
 fastcgi_param    REDIRECT_STATUS     200;
 EOF
+
+# Hide nginx server version
+sed -i "s/# server_tokens off;/server_tokens off;/" /etc/nginx/nginx.conf
+
+# Optimize nginx
+sed -i "s/worker_connections 768;/worker_connections 8000;/" /etc/nginx/nginx.conf
+sed -i "s/worker_processes auto;/worker_processes auto;\\nworker_rlimit_nofile 8192;/g" /etc/nginx/nginx.conf
 
 # Set The Nginx & PHP-FPM User
 sed -i "s/user www-data;/user rinvex;/" /etc/nginx/nginx.conf
