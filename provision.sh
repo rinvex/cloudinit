@@ -131,9 +131,7 @@ sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
 # Generate default ssl certificate
-echo "Start: GSSL"
 gssl $(curl http://169.254.169.254/latest/meta-data/public-ipv4 -s) default
-echo "End: GSSL"
 
 # Restart nginx service
 /etc/init.d/nginx restart
