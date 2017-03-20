@@ -37,9 +37,12 @@ server {
     ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
 
-    # NGINX SNIPPETS (DOT NOT REMOVE!)
-    include snippets/global/general/ssl.conf;
-    include snippets/global/general/headers.conf;
+    # Include basic nginx server config
+    include /etc/nginx/snippets/ssl.conf;
+    include /etc/nginx/snippets/headers.conf;
+    include /etc/nginx/snippets/expires.conf;
+    include /etc/nginx/snippets/cross-domain-fonts.conf;
+    include /etc/nginx/snippets/protect-system-files.conf;
 
     ## verify chain of trust of OCSP response using Root CA and Intermediate certs
     ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
@@ -112,9 +115,12 @@ server {
     ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
 
-    # NGINX SNIPPETS (DOT NOT REMOVE!)
-    include snippets/global/general/ssl.conf;
-    include snippets/global/general/headers.conf;
+    # Include basic nginx server config
+    include /etc/nginx/snippets/ssl.conf;
+    include /etc/nginx/snippets/headers.conf;
+    include /etc/nginx/snippets/expires.conf;
+    include /etc/nginx/snippets/cross-domain-fonts.conf;
+    include /etc/nginx/snippets/protect-system-files.conf;
 
     ## verify chain of trust of OCSP response using Root CA and Intermediate certs
     ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
