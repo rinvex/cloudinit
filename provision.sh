@@ -123,12 +123,6 @@ sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
 # Generate Strong Diffie-Hellman Group
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
-# Create global nginx snippets folders
-mkdir /etc/nginx/snippets/global/before -p 2>/dev/null
-mkdir /etc/nginx/snippets/global/server -p 2>/dev/null
-mkdir /etc/nginx/snippets/global/general -p 2>/dev/null
-mkdir /etc/nginx/snippets/global/after -p 2>/dev/null
-
 # Add letsencrypt cronjob
 sudo su rinvex <<'EOF'
 crontab -l | { cat; echo "0 */12 * * * certbot-auto renew --agree-tos --quiet"; } | crontab -
