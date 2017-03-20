@@ -26,7 +26,6 @@ mkdir /etc/nginx/snippets/\$1/server -p 2>/dev/null
 mkdir /etc/nginx/snippets/\$1/after -p 2>/dev/null
 
 block="# NGINX SNIPPETS (DOT NOT REMOVE!)
-include snippets/global/before/*;
 include snippets/\$1/before/*;
 
 server {
@@ -54,7 +53,6 @@ server {
     charset utf-8;
 
     # NGINX SNIPPETS (DOT NOT REMOVE!)
-    include snippets/global/server/*;
     include snippets/\$1/server/*;
 
     location / {
@@ -82,7 +80,6 @@ server {
 }
 
 # NGINX SNIPPETS (DOT NOT REMOVE!)
-include snippets/global/after/*;
 include snippets/\$1/after/*;
 "
 
