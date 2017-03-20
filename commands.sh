@@ -3,7 +3,7 @@
 set -e
 
 # Write serve script (add virtual host)
-# Usage: serve domain.ext /home/user/path email@domain.ext
+# Usage: serve domain.ext /home/user/path
 cat > /usr/local/bin/serve << EOF
 #!/usr/bin/env bash
 
@@ -15,34 +15,65 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
-    echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory email@domain.ext"
+    echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory"
     exit 1
 fi
 
 echo "Creating nginx configuration files..."
 
-mkdir /etc/nginx/snippets/\$1/before -p 2>/dev/null
-mkdir /etc/nginx/snippets/\$1/server -p 2>/dev/null
-mkdir /etc/nginx/snippets/\$1/after -p 2>/dev/null
+server="# Redirect every HTTP request to non-www HTTPS...
+# Choose between www and non-www, listen on the *wrong* one and redirect to
+# the right one -- http://wiki.nginx.org/Pitfalls#Server_Name
+server {
+  listen [::]:80;
+  listen 80;
 
-block="# NGINX SNIPPETS (DOT NOT REMOVE!)
-include snippets/\$1/before/*;
+  # listen on both hosts
+  server_name \$1 www.\$1;
+
+  # and redirect to the https host (declared below)
+  # avoiding http://www -> https://www -> https:// chain.
+  return 301 https://\$1\\\$request_uri;
+}
 
 server {
-    listen \${5:-443} ssl http2;
+  listen [::]:443 ssl http2;
+  listen 443 ssl http2;
+
+  # listen on the wrong host
+  server_name www.\$1;
+
+  # Include nginx ssl config
+  include /etc/nginx/snippets/ssl.conf;
+
+  # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
+  ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
+
+  ## verify chain of trust of OCSP response using Root CA and Intermediate certs
+  ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
+
+  # Use Google DNS servers for upstream dns resolving
+  resolver 8.8.8.8 8.8.4.4 valid=300s;
+  resolver_timeout 5s;
+
+  # and redirect to the non-www host (declared below)
+  return 301 https://\$1\\\$request_uri;
+}
+
+server {
+    listen [::]:443 ssl http2;
+    listen 443 ssl http2;
+
+    # The host name to respond to
     server_name \$1;
-    root \"\$2\";
+
+    # Include nginx ssl config
+    include /etc/nginx/snippets/ssl.conf;
 
     # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
-
-    # Include basic nginx server config
-    include /etc/nginx/snippets/ssl.conf;
-    include /etc/nginx/snippets/headers.conf;
-    include /etc/nginx/snippets/expires.conf;
-    include /etc/nginx/snippets/cross-domain-fonts.conf;
-    include /etc/nginx/snippets/protect-system-files.conf;
 
     ## verify chain of trust of OCSP response using Root CA and Intermediate certs
     ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
@@ -51,12 +82,22 @@ server {
     resolver 8.8.8.8 8.8.4.4 valid=300s;
     resolver_timeout 5s;
 
-    index index.html index.htm index.php;
+    # Path for static files
+    root \$2;
 
+    # Specify a charset
     charset utf-8;
 
-    # NGINX SNIPPETS (DOT NOT REMOVE!)
-    include snippets/\$1/server/*;
+    # Custom 404 page
+    error_page 404 /index.php;
+
+    # Include basic nginx server config
+    include /etc/nginx/snippets/headers.conf;
+    include /etc/nginx/snippets/expires.conf;
+    include /etc/nginx/snippets/cross-domain-fonts.conf;
+    include /etc/nginx/snippets/protect-system-files.conf;
+
+    index index.html index.htm index.php;
 
     location / {
         try_files \\\$uri \\\$uri/ /index.php?\\\$query_string;
@@ -66,9 +107,7 @@ server {
     location = /robots.txt  { access_log off; log_not_found off; }
 
     access_log off;
-    error_log  /var/log/nginx/\$1-error.log error;
-
-    error_page 404 /index.php;
+    error_log /var/log/nginx/\$1/error.log warn;
 
     location ~ \.php\$ {
         fastcgi_split_path_info ^(.+\.php)(/.+)\$;
@@ -76,17 +115,10 @@ server {
         fastcgi_index index.php;
         include fastcgi_params;
     }
-
-    location ~ /\.ht {
-        deny all;
-    }
 }
-
-# NGINX SNIPPETS (DOT NOT REMOVE!)
-include snippets/\$1/after/*;
 "
 
-echo "\$block" > "/etc/nginx/sites-available/\$1"
+echo "\$server" > "/etc/nginx/sites-available/\$1"
 ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
 # Stop nginx service
@@ -94,47 +126,7 @@ ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
 # Generate a new letsencrypt certificate
 echo "Generating letsencrypt certificate..."
-certbot-auto certonly --standalone --webroot-path \$2 --domain \$1 --domain www.\$1 --email \$3 --agree-tos
-
-# Write SSL redirection config
-ssl_redirect="# Redirect every request to HTTPS...
-server {
-    listen \${4:-80};
-    listen [::]:\${4:-80};
-
-    server_name .\$1;
-    return 301 https://\\\$host\\\$request_uri;
-}
-
-# Redirect SSL to primary domain SSL...
-server {
-    listen \${5:-443} ssl http2;
-    listen [::]:\${5:-443} ssl http2;
-
-    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
-    ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
-
-    # Include basic nginx server config
-    include /etc/nginx/snippets/ssl.conf;
-    include /etc/nginx/snippets/headers.conf;
-    include /etc/nginx/snippets/expires.conf;
-    include /etc/nginx/snippets/cross-domain-fonts.conf;
-    include /etc/nginx/snippets/protect-system-files.conf;
-
-    ## verify chain of trust of OCSP response using Root CA and Intermediate certs
-    ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
-
-    # Use Google DNS servers for upstream dns resolving
-    resolver 8.8.8.8 8.8.4.4 valid=300s;
-    resolver_timeout 5s;
-
-    server_name www.\$1;
-    return 301 https://\$1\\\$request_uri;
-}
-"
-
-echo "\$ssl_redirect" > "/etc/nginx/snippets/\$1/before/ssl_redirect.conf"
+certbot-auto certonly --standalone --webroot-path \$2 --domain \$1 --domain www.\$1 --email \${3:-help@rinvex.com} --agree-tos
 
 # Start nginx service
 /etc/init.d/nginx start
@@ -168,7 +160,6 @@ rm -rvf /etc/letsencrypt/archive/\$1
 rm -rvf /etc/letsencrypt/renewal/\$1.conf
 
 echo "Removing virtual host..."
-rm -rvf /etc/nginx/snippets/\$1
 rm -rvf /etc/nginx/sites-enabled/\$1
 rm -rvf /etc/nginx/sites-available/\$1
 
