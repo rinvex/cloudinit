@@ -62,59 +62,59 @@ server {
 }
 
 server {
-    listen [::]:443 ssl http2;
-    listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  listen 443 ssl http2;
 
-    # The host name to respond to
-    server_name \$1;
+  # The host name to respond to
+  server_name \$1;
 
-    # Include nginx ssl config
-    include /etc/nginx/snippets/ssl.conf;
+  # Include nginx ssl config
+  include /etc/nginx/snippets/ssl.conf;
 
-    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
-    ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
+  # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
+  ssl_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/\$1/privkey.pem;
 
-    ## verify chain of trust of OCSP response using Root CA and Intermediate certs
-    ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
+  ## verify chain of trust of OCSP response using Root CA and Intermediate certs
+  ssl_trusted_certificate /etc/letsencrypt/live/\$1/fullchain.pem;
 
-    # Use Google DNS servers for upstream dns resolving
-    resolver 8.8.8.8 8.8.4.4 valid=300s;
-    resolver_timeout 5s;
+  # Use Google DNS servers for upstream dns resolving
+  resolver 8.8.8.8 8.8.4.4 valid=300s;
+  resolver_timeout 5s;
 
-    # Path for static files
-    root \$2;
+  # Path for static files
+  root \$2;
 
-    # Specify a charset
-    charset utf-8;
+  # Specify a charset
+  charset utf-8;
 
-    # Custom 404 page
-    error_page 404 /index.php;
+  # Custom 404 page
+  error_page 404 /index.php;
 
-    # Include basic nginx server config
-    include /etc/nginx/snippets/headers.conf;
-    include /etc/nginx/snippets/expires.conf;
-    include /etc/nginx/snippets/cross-domain-fonts.conf;
-    include /etc/nginx/snippets/protect-system-files.conf;
+  # Include basic nginx server config
+  include /etc/nginx/snippets/headers.conf;
+  include /etc/nginx/snippets/expires.conf;
+  include /etc/nginx/snippets/cross-domain-fonts.conf;
+  include /etc/nginx/snippets/protect-system-files.conf;
 
-    index index.html index.htm index.php;
+  index index.html index.htm index.php;
 
-    location / {
-        try_files \\\$uri \\\$uri/ /index.php?\\\$query_string;
-    }
+  location / {
+      try_files \\\$uri \\\$uri/ /index.php?\\\$query_string;
+  }
 
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
+  location = /favicon.ico { access_log off; log_not_found off; }
+  location = /robots.txt  { access_log off; log_not_found off; }
 
-    access_log off;
-    error_log /var/log/nginx/\$1/error.log warn;
+  access_log off;
+  error_log /var/log/nginx/\$1/error.log warn;
 
-    location ~ \.php\$ {
-        fastcgi_split_path_info ^(.+\.php)(/.+)\$;
-        fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
-        fastcgi_index index.php;
-        include fastcgi_params;
-    }
+  location ~ \.php\$ {
+      fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+      fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+  }
 }
 "
 
