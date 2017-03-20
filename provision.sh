@@ -110,6 +110,14 @@ wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/ex
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
 
+# Download nginx default sites
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/sites-available/ssl.no-default.conf -O /etc/nginx/sites-available/ssl.no-default.conf
+
+# Enable default nginx sites
+ln -fs "/etc/nginx/sites-available/no-default.conf" "/etc/nginx/sites-enabled/no-default.conf"
+ln -fs "/etc/nginx/sites-available/ssl.no-default.conf" "/etc/nginx/sites-enabled/ssl.no-default.conf"
+
 # Set The PHP-FPM User
 sed -i "s/user = www-data/user = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 sed -i "s/group = www-data/group = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
