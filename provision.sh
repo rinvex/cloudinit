@@ -103,6 +103,13 @@ EOF
 rm -rvf /etc/nginx/nginx.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/nginx.conf -O /etc/nginx/nginx.conf
 
+# Download nginx snippets
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/ssl.conf -O /etc/nginx/snippets/ssl.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/headers.conf -O /etc/nginx/snippets/headers.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/expires.conf -O /etc/nginx/snippets/expires.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
+
 # Set The PHP-FPM User
 sed -i "s/user = www-data/user = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 sed -i "s/group = www-data/group = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
