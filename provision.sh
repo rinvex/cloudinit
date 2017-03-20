@@ -126,11 +126,16 @@ sed -i "s/listen\.owner.*/listen.owner = rinvex/" /etc/php/7.1/fpm/pool.d/www.co
 sed -i "s/listen\.group.*/listen.group = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
 
-# Restart nginx service
-/etc/init.d/nginx restart
-
 # Generate Strong Diffie-Hellman Group
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
+
+# Generate default ssl certificate
+echo "Start: GSSL"
+gssl $(curl http://169.254.169.254/latest/meta-data/public-ipv4 -s) default
+echo "End: GSSL"
+
+# Restart nginx service
+/etc/init.d/nginx restart
 
 # Add letsencrypt cronjob
 sudo su rinvex <<'EOF'
