@@ -9,7 +9,7 @@ cat > /usr/local/bin/serve << EOF
 
 set -e
 
-if [[ $EUID -ne 0 ]]; then
+if [[ \$EUID -ne 0 ]]; then
    echo "This script must be run as root" 
    exit 1
 fi
@@ -147,7 +147,7 @@ cat > /usr/local/bin/unserve << EOF
 
 set -e
 
-if [[ $EUID -ne 0 ]]; then
+if [[ \$EUID -ne 0 ]]; then
    echo "This script must be run as root" 
    exit 1
 fi
@@ -219,7 +219,7 @@ cat > /usr/local/bin/secure << EOF
 
 set -e
 
-if [[ $EUID -ne 0 ]]; then
+if [[ \$EUID -ne 0 ]]; then
    echo "This script must be run as root" 
    exit 1
 fi
