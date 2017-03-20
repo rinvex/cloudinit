@@ -99,17 +99,11 @@ fastcgi_param    HTTPS               \$https if_not_empty;
 fastcgi_param    REDIRECT_STATUS     200;
 EOF
 
-# Hide nginx server version
-sed -i "s/# server_tokens off;/server_tokens off;/" /etc/nginx/nginx.conf
+# Replace default nginx config with optimized one
+rm -rvf /etc/nginx/nginx.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/nginx.conf -O /etc/nginx/nginx.conf
 
-# Optimize nginx
-sed -i "s/worker_connections 768;/worker_connections 8000;/" /etc/nginx/nginx.conf
-sed -i "s/worker_processes auto;/worker_processes auto;\\nworker_rlimit_nofile 8192;/g" /etc/nginx/nginx.conf
-
-# Set The Nginx & PHP-FPM User
-sed -i "s/user www-data;/user rinvex;/" /etc/nginx/nginx.conf
-sed -i "s/# server_names_hash_bucket_size.*/server_names_hash_bucket_size 64;/" /etc/nginx/nginx.conf
-
+# Set The PHP-FPM User
 sed -i "s/user = www-data/user = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 sed -i "s/group = www-data/group = rinvex/" /etc/php/7.1/fpm/pool.d/www.conf
 
