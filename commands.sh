@@ -21,6 +21,9 @@ fi
 
 echo "Creating nginx configuration files..."
 
+# Create nginx site log directory
+mkdir /var/log/nginx/\$1 -p 2>/dev/null
+
 server="# Redirect every HTTP request to non-www HTTPS...
 # Choose between www and non-www, listen on the *wrong* one and redirect to
 # the right one -- http://wiki.nginx.org/Pitfalls#Server_Name
@@ -106,7 +109,7 @@ server {
   location = /favicon.ico { access_log off; log_not_found off; }
   location = /robots.txt  { access_log off; log_not_found off; }
 
-  access_log off;
+  access_log /var/log/nginx/\$1/access.log main;
   error_log /var/log/nginx/\$1/error.log warn;
 
   location ~ \.php\$ {
