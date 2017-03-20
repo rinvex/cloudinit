@@ -132,10 +132,26 @@ mkdir /etc/nginx/snippets/global/after -p 2>/dev/null
 # Write server headers
 headers="# HSTS and other security headers (ngx_http_headers_module is required) (15768000 seconds = 6 months)
 add_header Strict-Transport-Security max-age=15768000;
-add_header X-Frame-Options \"SAMEORIGIN\";
-add_header X-XSS-Protection \"1; mode=block\";
-add_header X-Content-Type-Options \"nosniff\";
 add_header Referrer-Policy \"strict-origin-when-cross-origin\";
+add_header X-UA-Compatible "IE=Edge";
+
+# The X-Frame-Options header indicates whether a browser
+# should be allowed to render a page within a frame or iframe.
+add_header X-Frame-Options \"SAMEORIGIN\" always;
+
+# The X-XSS-Protection header is used by Internet Explorer version 8+
+# The header instructs IE to enable its inbuilt anti-cross-site scripting filter.
+add_header X-XSS-Protection \"1; mode=block\" always;
+
+# MIME type sniffing security protection
+#	There are very few edge cases where you wouldn't want this enabled.
+add_header X-Content-Type-Options \"nosniff\" always;
+
+# with Content Security Policy (CSP) enabled (and a browser that supports it (http://caniuse.com/#feat=contentsecuritypolicy),
+# you can tell the browser that it can only download content from the domains you explicitly allow
+# CSP can be quite difficult to configure, and cause real issues if you get it wrong
+# There is website that helps you generate a policy here http://cspisawesome.com/
+# add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.google-analytics.com;" always;
 "
 
 echo -n "$headers" > "/etc/nginx/snippets/global/general/headers.conf"
@@ -152,8 +168,13 @@ ssl_session_tickets off;
 # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
 ssl_dhparam /etc/nginx/dhparam.pem;
 
-# intermediate configuration. tweak to your needs.
+# Protect against the BEAST and POODLE attacks by not using SSLv3 at all.
+# If you need to support older browsers (IE6) you may need to add
+# SSLv3 to the list of protocols below.
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+# Ciphers set to best allow protection from Beast, while providing forwarding secrecy,
+# as defined by Mozilla (Intermediate Set) - https://wiki.mozilla.org/Security/Server_Side_TLS#Nginx
 ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
 ssl_prefer_server_ciphers on;
 
@@ -163,7 +184,7 @@ ssl_stapling on;
 ssl_stapling_verify on;
 "
 
-echo -n "$ssl" > "/etc/nginx/snippets/global/general/ssl.conf"
+echo -n "$ssl" > "/etc/nginx/snippets/ssl.conf"
 
 
 # Add letsencrypt cronjob
