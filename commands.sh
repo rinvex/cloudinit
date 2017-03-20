@@ -245,7 +245,7 @@ chmod +x /usr/local/bin/secure
 
 
 # Write gssl script
-# Usage: gssl domain.ext
+# Usage: gssl domain.ext frinedlyName
 cat > /usr/local/bin/gssl << EOF
 #!/usr/bin/env bash
 
@@ -256,8 +256,8 @@ if [[ \$EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [[ \$# -eq 0 ]] || [[ -z "\$1" ]]; then
-    echo "Invalid arguments provided! Usage: gssl domain.ext"
+if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
+    echo "Invalid arguments provided! Usage: gssl domain.ext frinedlyName"
     exit 1
 fi
 
@@ -274,12 +274,12 @@ emailAddress=
 
 # Create our SSL directory
 # in case it doesn't exist
-sudo mkdir -p "/etc/ssl/\$1"
+sudo mkdir -p "/etc/ssl/\$2"
 
 # Generate our Private Key, CSR and Certificate
-sudo openssl genrsa -out "/etc/ssl/\$1/\$1.key" 2048
-sudo openssl req -new -subj "\$(echo -n "\$SUBJ" | tr "\n" "/")" -key "/etc/ssl/\$1/\$1.key" -out "/etc/ssl/\$1/\$1.csr" -passin pass:""
-sudo openssl x509 -req -days 365 -in "/etc/ssl/\$1/\$1.csr" -signkey "/etc/ssl/\$1/\$1.key" -out "/etc/ssl/\$1/\$1.crt"
+sudo openssl genrsa -out "/etc/ssl/\$2/\$2.key" 2048
+sudo openssl req -new -subj "\$(echo -n "\$SUBJ" | tr "\n" "/")" -key "/etc/ssl/\$2/\$2.key" -out "/etc/ssl/\$2/\$2.csr" -passin pass:""
+sudo openssl x509 -req -days 365 -in "/etc/ssl/\$2/\$2.csr" -signkey "/etc/ssl/\$2/\$2.key" -out "/etc/ssl/\$2/\$2.crt"
 
 EOF
 
