@@ -107,6 +107,7 @@ wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/nginx.conf 
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/ssl.conf -O /etc/nginx/snippets/ssl.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/headers.conf -O /etc/nginx/snippets/headers.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/expires.conf -O /etc/nginx/snippets/expires.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/ssl-stapling.conf -O /etc/nginx/snippets/ssl-stapling.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
 
