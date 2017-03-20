@@ -8,12 +8,12 @@ system_info:
   default_user:
     name: rinvex
 runcmd:
-  - wget https://raw.githubusercontent.com/rinvex/cloudinit/master/provision.sh
-  - chmod +x provision.sh
-  - ./provision.sh
   - wget https://raw.githubusercontent.com/rinvex/cloudinit/master/commands.sh
   - chmod +x commands.sh
   - ./commands.sh
+  - wget https://raw.githubusercontent.com/rinvex/cloudinit/master/provision.sh
+  - chmod +x provision.sh
+  - ./provision.sh
 ```
 
 > **Notes:**
