@@ -110,6 +110,7 @@ wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/ex
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/ssl-stapling.conf -O /etc/nginx/snippets/ssl-stapling.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/snippets/cross-domain-insecure.conf -O /etc/nginx/snippets/cross-domain-insecure.conf
 
 # Download nginx default sites
 wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
