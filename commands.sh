@@ -34,7 +34,7 @@ server {
   # listen on both hosts
   server_name \$1 www.\$1;
 
-# Include nginx security headers
+  # Include nginx security headers
   include /etc/nginx/snippets/headers.conf;
 
   # and redirect to the https host (declared below)
