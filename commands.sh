@@ -34,6 +34,9 @@ server {
   # listen on both hosts
   server_name \$1 www.\$1;
 
+# Include nginx security headers
+  include /etc/nginx/snippets/headers.conf;
+
   # and redirect to the https host (declared below)
   # avoiding http://www -> https://www -> https:// chain.
   return 301 https://\$1\\\$request_uri;
@@ -48,6 +51,7 @@ server {
 
   # Include nginx ssl config
   include /etc/nginx/snippets/ssl.conf;
+  include /etc/nginx/snippets/headers.conf;
   include /etc/nginx/snippets/ssl-stapling.conf;
 
   # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
