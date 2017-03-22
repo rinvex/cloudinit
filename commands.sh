@@ -201,11 +201,14 @@ fi
 
 if [[ -f artisan ]]; then
     php artisan optimize
-    php artisan route:cache
-    php artisan config:cache
-    php artisan migrate --force
-    php artisan cache:clear
     php artisan view:clear
+    php artisan cache:clear
+    php artisan migrate --force
+    
+    if [[ \$2 -eq 'master' ]]; then
+        php artisan route:cache
+        php artisan config:cache    
+    fi
 fi
 
 echo "Done!"
