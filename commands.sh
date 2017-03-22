@@ -185,11 +185,12 @@ if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
     exit 1
 fi
 
+[[ \$2 = 'master' ]] && environment='production' || environment='dev'
+[[ \$2 = 'master' ]] && flags='--no-dev' || flags=''
+
 cd /home/rinvex/\$1
 git pull origin \$2
-composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-
-[[ \$2 = 'master' ]] && environment='production' || environment='dev'
+composer install \$flags --no-interaction --prefer-dist --optimize-autoloader
 
 npm install
 npm run \$environment
