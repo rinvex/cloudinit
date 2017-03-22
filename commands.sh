@@ -185,18 +185,21 @@ if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
     exit 1
 fi
 
-[[ \$2 = 'master' ]] && environment='production' || environment='dev'
-[[ \$2 = 'master' ]] && flags='--no-dev' || flags=''
-
 cd /home/rinvex/\$1
 git pull origin \$2
-composer install \$flags --no-interaction --prefer-dist --optimize-autoloader
 
-npm install
-npm run \$environment
+if [[ \$2 -eq 'master' ]]; then
+   composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+   npm install
+   npm run production
+else
+   composer install --no-interaction --prefer-dist --optimize-autoloader
+   npm install
+   npm run dev
+fi
 
-if [ -f artisan ]
-then
+
+if [[ -f artisan ]]; then
     php artisan optimize
     php artisan route:cache
     php artisan config:cache
