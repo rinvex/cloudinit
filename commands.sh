@@ -203,11 +203,13 @@ if [[ -f artisan ]]; then
     php artisan optimize
     php artisan view:clear
     php artisan cache:clear
+    php artisan route:clear
+    php artisan config:clear
     php artisan migrate --force
     
     if [[ \$2 -eq 'master' ]]; then
         php artisan route:cache
-        php artisan config:cache    
+        php artisan config:cache
     fi
 fi
 
