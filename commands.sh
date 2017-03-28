@@ -213,6 +213,9 @@ if [[ -f artisan ]]; then
     fi
 fi
 
+# Restart php service to flush OPCache
+/etc/init.d/php7.1-fpm restart
+
 echo "Done!"
 EOF
 
