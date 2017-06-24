@@ -137,8 +137,8 @@ gssl $(curl http://169.254.169.254/latest/meta-data/public-ipv4 -s) default
 # Restart nginx service
 /etc/init.d/nginx restart
 
-# Add letsencrypt cronjob
-sudo su rinvex <<'EOF'
+# Add letsencrypt renewal and composer self-update cronjobs
+sudo su <<'EOF'
 crontab -l | { cat; echo "0 */12 * * * certbot-auto renew --pre-hook \"sudo /etc/init.d/nginx stop\" --post-hook \"sudo /etc/init.d/nginx start\" --agree-tos --quiet"; } | crontab -
 crontab -l | { cat; echo "0 0 * * * root /usr/local/bin/composer self-update >> /var/log/composer.log 2>&1"; } | crontab -
 EOF
