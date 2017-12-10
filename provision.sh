@@ -35,9 +35,9 @@ apt-get update
 # Install Some Basic Packages
 apt-get install -y build-essential libpcre3-dev python2.7-dev ntp \
 python-pip whois nginx sqlite3 nodejs wkhtmltopdf gcc libmcrypt4 unzip make \
-php7.1-cli php7.1-dev php7.1-pgsql php7.1-sqlite3 php7.1-gd php7.1-fpm php7.1-xml \
-php7.1-curl php7.1-memcached php7.1-imap php7.1-mysql php7.1-mbstring \
-php7.1-zip php7.1-bcmath php7.1-soap php7.1-intl php7.1-readline \
+php7.2-cli php7.2-dev php7.2-pgsql php7.2-sqlite3 php7.2-gd php7.2-fpm php7.2-xml \
+php7.2-curl php7.2-memcached php7.2-imap php7.2-mysql php7.2-mbstring \
+php7.2-zip php7.2-bcmath php7.2-soap php7.2-intl php7.2-readline \
 
 # Install Composer
 curl -sS https://getcomposer.org/installer | HOME="/home/coworkit" php -- --install-dir=/usr/local/bin --filename=composer
@@ -58,17 +58,17 @@ rm -rvf /etc/nginx/sites-enabled/default
 rm -rvf /etc/nginx/sites-available/default
 
 # Set Some PHP CLI Settings
-sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/cli/php.ini
-sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/cli/php.ini
-sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.1/cli/php.ini
-sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/cli/php.ini
+sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/cli/php.ini
+sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/cli/php.ini
+sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.2/cli/php.ini
+sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/cli/php.ini
 
 # Set Some PHP-FPM Options
-sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/fpm/php.ini
-sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/fpm/php.ini
-sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.1/fpm/php.ini
-sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.1/fpm/php.ini
-sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/fpm/php.ini
+sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/fpm/php.ini
+sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.2/fpm/php.ini
+sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/fpm/php.ini
 
 # Replace default nginx config with optimized one
 rm -rvf /etc/nginx/nginx.conf
@@ -89,21 +89,21 @@ wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/sites-ava
 ln -fs "/etc/nginx/sites-available/no-default.conf" "/etc/nginx/sites-enabled/no-default.conf"
 
 # Set The PHP-FPM User
-sed -i "s/user = www-data/user = coworkit/" /etc/php/7.1/fpm/pool.d/www.conf
-sed -i "s/group = www-data/group = coworkit/" /etc/php/7.1/fpm/pool.d/www.conf
+sed -i "s/user = www-data/user = coworkit/" /etc/php/7.2/fpm/pool.d/www.conf
+sed -i "s/group = www-data/group = coworkit/" /etc/php/7.2/fpm/pool.d/www.conf
 
-sed -i "s/listen\.owner.*/listen.owner = coworkit/" /etc/php/7.1/fpm/pool.d/www.conf
-sed -i "s/listen\.group.*/listen.group = coworkit/" /etc/php/7.1/fpm/pool.d/www.conf
-sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.1/fpm/pool.d/www.conf
+sed -i "s/listen\.owner.*/listen.owner = coworkit/" /etc/php/7.2/fpm/pool.d/www.conf
+sed -i "s/listen\.group.*/listen.group = coworkit/" /etc/php/7.2/fpm/pool.d/www.conf
+sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.2/fpm/pool.d/www.conf
 
 # Add User To WWW-Data
 usermod -a -G www-data coworkit
 id coworkit
 groups coworkit
 
-# Restart nginx and php7.1-fpm services
+# Restart nginx and php7.2-fpm services
 /etc/init.d/nginx restart
-/etc/init.d/php7.1-fpm restart
+/etc/init.d/php7.2-fpm restart
 
 # Clean Up
 apt-get -y autoremove
