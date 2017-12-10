@@ -6,12 +6,12 @@ When provisioning a new Ubuntu 16.04 server on the cloud, write the following co
 #cloud-config
 system_info:
   default_user:
-    name: rinvex
+    name: coworkit
 runcmd:
-  - wget https://raw.githubusercontent.com/rinvex/cloudinit/master/commands.sh
+  - wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/commands.sh
   - chmod +x commands.sh
   - ./commands.sh
-  - wget https://raw.githubusercontent.com/rinvex/cloudinit/master/provision.sh
+  - wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/provision.sh
   - chmod +x provision.sh
   - ./provision.sh
 ```
@@ -19,7 +19,7 @@ runcmd:
 > **Notes:**
 
 > 1. Some configurations has been ommitted since the default AWS Ubuntu AMI, and the default DigitalOcean Ubuntu Droplet has these config by default.
-> 2. Notice that the provisioning script uses **rinvex** as a default user system-wide, change if required.
+> 2. Notice that the provisioning script uses **coworkit** as a default user system-wide, change if required.
 > 3. This is intended to be just web server, that's why no database or other software config included.
 > 4. Tested only in AWS EC2 Ubuntu 16.04, but should work with DigitalOcean droplets as well.
 > 5. Log file found on provisioned server here: `/var/log/cloud-init-output.log`
