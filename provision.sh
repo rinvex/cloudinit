@@ -18,6 +18,12 @@ export LANG=en_US.UTF-8
 # Set My Timezone
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
+# Setup some SSH Options
+sed -i "s/PermitRootLogin .*/PermitRootLogin no/" /etc/ssh/sshd_config
+
+# Restart ssh service
+/etc/init.d/ssh restart
+
 # Install Some PPAs
 apt-add-repository ppa:ondrej/php -y
 apt-add-repository ppa:nginx/stable -y
