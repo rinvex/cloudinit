@@ -165,6 +165,9 @@ fi
 # Restart php service to flush OPCache
 /etc/init.d/php7.2-fpm restart
 
+# Restart all queue workers
+php artisan queue:restart
+
 echo "Done!"
 EOF
 
