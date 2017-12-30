@@ -204,3 +204,142 @@ echo '-------------------------'
 EOF
 
 chmod +x /usr/local/bin/secure
+
+
+# Write queue script
+# Usage: queue worker-name domain.ext [options]
+cat > /usr/local/bin/queue << EOF
+#!/usr/bin/env bash
+
+set -e
+if [[ \$EUID -ne 0 ]]; then
+   echo "This script must be run as root"
+   exit 1
+fi
+
+# set an initial values
+COMMAND='queue:work'
+QUIET=''
+SLEEP=10
+QUEUE=''
+NUMPROCS=3
+WUSER=\$USER
+TIMEOUT=60
+TRIES=3
+ENV=''
+USAGE="Usage: \$(basename "\$0") [options]
+
+OPTIONS:
+    -h | --help                     Display this help message
+    -w | --worker <name>            Queue worker name to be used
+    -d | --domain <domain>          Domain name on the filesystem
+    -c | --connection <name>        The name of the queue connection to work
+    -t | --timeout <seconds>        The number of seconds a child process can run
+    -e | --env <environment>        The environment the command should run under
+    -p | --numprocs <number>        The number worker instances to be launched
+    -s | --sleep <seconds>          Number of seconds to sleep when no job is available
+    -x | --tries <number>           Number of times to attempt a job before logging it failed
+    -l | --queue <name>             The names of the queues to work
+    -u | --user <user>              System user to be used by queue worker
+    -o | --once                     Only process the next job on the queue
+    -q | --quiet                    Do not output any message"
+
+# Read the options
+PARSED_OPTIONS=`getopt -n "\$0" -o hoqw:d:c:t:e:p:s:x:l:u: --l help,once,quiet,worker:,domain:,connection:,timeout:,env:,numprocs:,sleep:,tries:,queue:,user: -- "\$@"`
+
+# A little magic, necessary when using getopt
+eval set -- "\$PARSED_OPTIONS"
+
+# extract options and their arguments into variables.
+# Now goes through all the options with a case and using shift to analyse 1 argument at a time.
+# \$1 identifies the first argument, and when we use shift we discard the first argument, so \$2 becomes \$1 and goes again through the case.
+while true ; do
+    case "\$1" in
+        -h|--help) echo "\$USAGE" >&2 ; exit 1 ; shift ;;
+        -o|--once) COMMAND="queue:listen" ; shift ;;
+        -q|--quiet) QUIET="--quiet" ; shift ;;
+        -w|--worker)
+            case "\$2" in
+                "") shift 2 ;;
+                *) WORKER='\$2' ; shift 2 ;;
+            esac ;;
+        -c|--connection)
+            case "\$2" in
+                "") shift 2 ;;
+                *) CONNECTION='\$2' ; shift 2 ;;
+            esac ;;
+        -d|--domain)
+            case "\$2" in
+                "") shift 2 ;;
+                *) DOMAIN='\$2' ; shift 2 ;;
+            esac ;;
+        -s|--sleep)
+            case "\$2" in
+                "") shift 2 ;;
+                *) SLEEP='--sleep=\$2' ; shift 2 ;;
+            esac ;;
+        -l|--queue)
+            case "\$2" in
+                "") shift 2 ;;
+                *) QUEUE='--queue="\$2"' ; shift 2 ;;
+            esac ;;
+        -p|--numprocs)
+            case "\$2" in
+                "") shift 2 ;;
+                *) NUMPROCS=\$2 ; shift 2 ;;
+            esac ;;
+        -u|--user)
+            case "\$2" in
+                "") shift 2 ;;
+                *) WUSER=\$2 ; shift 2 ;;
+            esac ;;
+        -t|--timeout)
+            case "\$2" in
+                "") shift 2 ;;
+                *) TIMEOUT='--timeout=\$2' ; shift 2 ;;
+            esac ;;
+        -x|--tries)
+            case "\$2" in
+                "") shift 2 ;;
+                *) TRIES='--tries=\$2' ; shift 2 ;;
+            esac ;;
+        -e|--env)
+            case "\$2" in
+                "") shift 2 ;;
+                *) ENV='--env="\$2"' ; shift 2 ;;
+            esac ;;
+        --) shift ; break ;;
+        *) echo "Internal error! Run '\$(basename "\$0") -h' for help." ; exit 1 ;;
+    esac
+done
+
+if [[ -z "\$WORKER" ]] || [[ -z "\$DOMAIN" ]]; then
+    echo "You must supply at least: worker, and domain names! Run '\$(basename "\$0") -h' for help."
+    exit 1
+fi
+
+config="[program:\$WORKER]
+command=php /home/\$WUSER/\$DOMAIN/artisan \$COMMAND \$CONNECTION \$SLEEP \$QUEUE \$TIMEOUT \$TRIES \$ENV \$QUIET
+
+process_name=%(program_name)s_%(process_num)02d
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=\$WUSER
+numprocs=\$NUMPROCS
+stdout_logfile=/home/\$WUSER/.\$WUSER/\$WORKER.log"
+
+echo "\$config" > "/etc/supervisor/conf.d/\$WORKER.conf"
+
+echo "Added queue worker '\$WORKER' successfully!"
+
+# Update Supervisor
+supervisorctl reread
+supervisorctl update
+supervisorctl start \$WORKER:*
+
+echo "Updated supervisor successfully!"
+EOF
+
+chmod +x /usr/local/bin/queue
