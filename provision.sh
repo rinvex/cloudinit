@@ -4,13 +4,6 @@ set -e
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Update hosts records
-ip=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
-hostname=$(curl -s http://169.254.169.254/latest/meta-data/hostname)
-if [[ $ip && $hostname ]]; then
-  echo "$ip $hostname ${hostname%%.*}" >> /etc/hosts
-fi
-
 # Update Package List
 apt-get update
 
