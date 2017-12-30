@@ -4,6 +4,7 @@ When provisioning a new Ubuntu 16.04 server on the cloud, write the following co
 
 ```shell
 #cloud-config
+hostname: coworkit
 system_info:
   default_user:
     name: coworkit
