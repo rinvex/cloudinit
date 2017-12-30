@@ -12,7 +12,6 @@ system_info:
     name: coworkit
 power_state:
   delay: "now"
-  message: Rebooting now.
   mode: reboot
 runcmd:
   - wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/commands.sh
