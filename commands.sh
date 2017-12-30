@@ -137,6 +137,9 @@ fi
 cd /home/coworkit/\$1
 git pull origin \$2
 
+# Generate javascript routes
+php artisan laroute:generate
+
 if [[ \$2 -eq 'master' ]]; then
    composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
    npm install
