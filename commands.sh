@@ -328,7 +328,7 @@ stopasgroup=true
 killasgroup=true
 user=\$WUSER
 numprocs=\$NUMPROCS
-stdout_logfile=/home/\$WUSER/.\$WUSER/\$WORKER.log"
+stdout_logfile=/var/log/supervisor/\$WORKER.log"
 
 echo "\$config" > "/etc/supervisor/conf.d/\$WORKER.conf"
 
