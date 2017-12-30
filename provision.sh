@@ -3,6 +3,11 @@
 set -e
 
 export DEBIAN_FRONTEND=noninteractive
+HOSTNAME=$(curl -s http://169.254.169.254/latest/meta-data/hostname)
+USERDATA=$(curl -s http://169.254.169.254/2009-04-04/user-data)
+echo "--- asdasdasd ---"
+echo $USERDATA
+echo "--- asdasdasd ---"
 
 # Update Package List
 apt-get update
@@ -43,12 +48,12 @@ php7.2-zip php7.2-bcmath php7.2-soap php7.2-intl php7.2-readline \
 sudo npm install -g svgo
 
 # Install Composer
-curl -sS https://getcomposer.org/installer | HOME="/home/coworkit" php -- --install-dir=/usr/local/bin --filename=composer
-chown coworkit:coworkit /home/coworkit/.composer -R
-chmod 775 /home/coworkit/.composer
+curl -sS https://getcomposer.org/installer | HOME="/home/$HOSTNAME" php -- --install-dir=/usr/local/bin --filename=composer
+chown coworkit:coworkit /home/$HOSTNAME/.composer -R
+chmod 775 /home/$HOSTNAME/.composer
 
 # Add Composer Global Bin To Path
-printf "\nPATH=\"/home/coworkit/.composer/vendor/bin:\$PATH\"\n" | tee -a /home/coworkit/.profile
+printf "\nPATH=\"/home/$HOSTNAME/.composer/vendor/bin:\$PATH\"\n" | tee -a /home/$HOSTNAME/.profile
 
 # Install Laravel Envoy & Installer
 sudo su coworkit <<'EOF'

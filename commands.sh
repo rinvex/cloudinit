@@ -2,6 +2,8 @@
 
 set -e
 
+HOSTNAME=$(curl -s http://169.254.169.254/latest/meta-data/hostname)
+
 # Write serve script (add virtual host)
 # Usage: serve domain.ext /home/user/path
 cat > /usr/local/bin/serve << EOF
