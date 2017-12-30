@@ -21,6 +21,8 @@ runcmd:
   - wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/provision.sh
   - chmod +x provision.sh
   - ./provision.sh
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCejl6eLn4Fc5i+huFDsDZvUFDOaoZCrU9xdErfjaYZW3RKRANPDDQcy+hdkPlxGFDiJQ7cqZEpQxsYkFi9YZr2VtCWV4J3OTqUK2LFCk3Dm76IIXpYABvBSTy6Mo9AYrAZVDvKE5qj4KZGzUkRug1dx7HGji2B4io52cadHrYZg8m+l+H17sqSWeaY8KYybiPPh5lILpMpZjSIVJyvRG2XOAkWFuhk8SQH1riqBGbQ1EN9WzBpEyUg35iKTWEMolWELYadUNLkIzF+CV9xUB7CYoWd9BHLBa4D90KZtdrNUJiWtUa73l8L4yjPR7JxGKnMz7rOrCKd67aiIup6MFqy/DOvQ0u+nyoHP9DQ2ywDw/F+G6uFEi5MjeTLoV/ZmvMA9QMrgGmcE5gqVwqaE3um9UxT42keSo66LrdqpQMQr044NU1wG1A0laJxpTnxM24WsW6T3a3OYjFiSH2hqZJ3iQHq/MPEgta2qf7tJM8DkySI2rb1p7geVG1rN1lhstemh/DBXs0iUWiNxX56QVYtHjgFjeXWHDBotacM8KKLt2s26RxOrHmw1sI7Ej/1KTMhYpJap5QBF60X1pglJiGUhTnl0lOg0ECbWwQIPQuktfargG8HUXTYFTXH22YzDiwJBVFB/k1X23hTif35qNW8TABim5gACDYtAwYjota5vQ== me+gitlab-coworkit@omranic.com
 ```
 
 > **Notes:**
