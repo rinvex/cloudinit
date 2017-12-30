@@ -221,7 +221,6 @@ if [[ \$EUID -ne 0 ]]; then
 fi
 
 # set an initial values
-COMMAND='queue:work'
 QUIET=''
 SLEEP=10
 QUEUE=''
@@ -244,11 +243,10 @@ OPTIONS:
     -x | --tries <number>           Number of times to attempt a job before logging it failed
     -l | --queue <name>             The names of the queues to work
     -u | --user <user>              System user to be used by queue worker
-    -o | --once                     Only process the next job on the queue
     -q | --quiet                    Do not output any message"
 
 # Read the options
-PARSED_OPTIONS='getopt -n "\$0" -o hoqw:d:c:t:e:p:s:x:l:u: --l help,once,quiet,worker:,domain:,connection:,timeout:,env:,numprocs:,sleep:,tries:,queue:,user: -- "\$@"'
+PARSED_OPTIONS='getopt -n "\$0" -o hqw:d:c:t:e:p:s:x:l:u: --l help,quiet,worker:,domain:,connection:,timeout:,env:,numprocs:,sleep:,tries:,queue:,user: -- "\$@"'
 
 # A little magic, necessary when using getopt
 eval set -- "\$PARSED_OPTIONS"
@@ -259,7 +257,6 @@ eval set -- "\$PARSED_OPTIONS"
 while true ; do
     case "\$1" in
         -h|--help) echo "\$USAGE" >&2 ; exit 1 ; shift ;;
-        -o|--once) COMMAND="queue:listen" ; shift ;;
         -q|--quiet) QUIET="--quiet" ; shift ;;
         -w|--worker)
             case "\$2" in
@@ -322,7 +319,7 @@ if [[ -z "\$WORKER" ]] || [[ -z "\$DOMAIN" ]]; then
 fi
 
 config="[program:\$WORKER]
-command=php /home/\$WUSER/\$DOMAIN/artisan \$COMMAND \$CONNECTION \$SLEEP \$QUEUE \$TIMEOUT \$TRIES \$ENV \$QUIET
+command=php /home/\$WUSER/\$DOMAIN/artisan queue:work \$CONNECTION \$SLEEP \$QUEUE \$TIMEOUT \$TRIES \$ENV \$QUIET
 
 process_name=%(program_name)s_%(process_num)02d
 autostart=true
