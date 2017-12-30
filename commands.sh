@@ -248,7 +248,7 @@ OPTIONS:
     -q | --quiet                    Do not output any message"
 
 # Read the options
-PARSED_OPTIONS=`getopt -n "\$0" -o hoqw:d:c:t:e:p:s:x:l:u: --l help,once,quiet,worker:,domain:,connection:,timeout:,env:,numprocs:,sleep:,tries:,queue:,user: -- "\$@"`
+PARSED_OPTIONS='getopt -n "\$0" -o hoqw:d:c:t:e:p:s:x:l:u: --l help,once,quiet,worker:,domain:,connection:,timeout:,env:,numprocs:,sleep:,tries:,queue:,user: -- "\$@"'
 
 # A little magic, necessary when using getopt
 eval set -- "\$PARSED_OPTIONS"
