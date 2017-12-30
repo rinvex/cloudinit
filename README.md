@@ -14,28 +14,6 @@ power_state:
   delay: "now"
   message: Rebooting now.
   mode: reboot
-packages:
-    - build-essential
-    - libpcre3-dev
-    - python2.7-dev
-    - ntp
-    - python-pip
-    - whois
-    - gcc
-    - supervisor
-    - nginx
-    - sqlite3
-    - wkhtmltopdf
-    - libmcrypt4
-    - unzip
-    - make
-    - jpegoptim
-    - optipng
-    - pngquant
-    - gifsicle
-package_update: true
-package_upgrade: true
-package_reboot_if_required: true
 runcmd:
   - wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/commands.sh
   - chmod +x commands.sh
