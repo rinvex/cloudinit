@@ -15,7 +15,7 @@ fi
 apt-get update
 
 # Update System Packages
-apt-get -y upgrade
+apt-get -y dist-upgrade
 
 # Force Locale
 echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
