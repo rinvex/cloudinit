@@ -68,24 +68,23 @@ rm -rvf /etc/nginx/sites-enabled/default
 rm -rvf /etc/nginx/sites-available/default
 
 # Set Some PHP CLI Settings
-sed -i "s/error_reporting.*/error_reporting = E_ALL/" /etc/php/7.2/cli/php.ini
-sed -i "s/display_errors.*/display_errors = On/" /etc/php/7.2/cli/php.ini
-sed -i "s/memory_limit.*/memory_limit = 512M/" /etc/php/7.2/cli/php.ini
-sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/cli/php.ini
+sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/cli/php.ini
+sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/cli/php.ini
+sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.2/cli/php.ini
+sed -i "s/;date.timezone = .*/date.timezone = UTC/" /etc/php/7.2/cli/php.ini
 
 # Set Some PHP-FPM Options
-sed -i "s/error_reporting.*/error_reporting = E_ALL/" /etc/php/7.2/fpm/php.ini
-sed -i "s/display_errors.*/display_errors = On/" /etc/php/7.2/fpm/php.ini
-sed -i "s/;cgi.fix_pathinfo.*/cgi.fix_pathinfo=0/" /etc/php/7.2/fpm/php.ini
-sed -i "s/memory_limit.*/memory_limit = 512M/" /etc/php/7.2/fpm/php.ini
-sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/fpm/php.ini
+sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/fpm/php.ini
+sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/fpm/php.ini
+sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;date.timezone = .*/date.timezone = UTC/" /etc/php/7.2/fpm/php.ini
 
 # Optimize OPcache for production
-sed -i "s/;opcache.enable.*/opcache.enable = 1/" /etc/php/7.2/fpm/php.ini
-sed -i "s/;opcache.memory_consumption.*/opcache.memory_consumption = 512/" /etc/php/7.2/fpm/php.ini
-sed -i "s/;opcache.max_accelerated_files.*/opcache.max_accelerated_files = 30000/" /etc/php/7.2/fpm/php.ini
-sed -i "s/;opcache.validate_timestamps.*/opcache.validate_timestamps = 0/" /etc/php/7.2/fpm/php.ini
-sed -i "s/;opcache.save_comments.*/opcache.save_comments = 1/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.enable=.*/opcache.enable=1/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.memory_consumption=.*/opcache.memory_consumption=512/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.max_accelerated_files=.*/opcache.max_accelerated_files=30000/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.validate_timestamps=.*/opcache.validate_timestamps=0/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.save_comments=.*/opcache.save_comments=1/" /etc/php/7.2/fpm/php.ini
 
 # Replace default nginx config with optimized one
 rm -rvf /etc/nginx/nginx.conf
