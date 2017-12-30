@@ -8,6 +8,10 @@ hostname: coworkit
 system_info:
   default_user:
     name: coworkit
+power_state:
+  delay: "now"
+  message: Rebooting now.
+  mode: reboot
 runcmd:
   - wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/commands.sh
   - chmod +x commands.sh
