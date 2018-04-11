@@ -14,10 +14,10 @@ power_state:
   delay: "now"
   mode: reboot
 runcmd:
-  - wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/commands.sh
+  - wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/commands.sh
   - chmod +x commands.sh
   - ./commands.sh
-  - wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/provision.sh
+  - wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/provision.sh
   - chmod +x provision.sh
   - ./provision.sh
 ssh_authorized_keys:

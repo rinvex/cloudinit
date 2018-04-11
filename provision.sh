@@ -95,18 +95,18 @@ sed -i "s/;opcache.save_comments=.*/opcache.save_comments=1/" /etc/php/7.2/fpm/p
 
 # Replace default nginx config with optimized one
 rm -rvf /etc/nginx/nginx.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/nginx.conf -O /etc/nginx/nginx.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/nginx.conf -O /etc/nginx/nginx.conf
 
 # Download nginx snippets
-wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/headers.conf -O /etc/nginx/snippets/headers.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/expires.conf -O /etc/nginx/snippets/expires.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/fastcgi_params.conf -O /etc/nginx/snippets/fastcgi_params.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/cross-domain-insecure.conf -O /etc/nginx/snippets/cross-domain-insecure.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/headers.conf -O /etc/nginx/snippets/headers.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/expires.conf -O /etc/nginx/snippets/expires.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/fastcgi_params.conf -O /etc/nginx/snippets/fastcgi_params.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/cross-domain-insecure.conf -O /etc/nginx/snippets/cross-domain-insecure.conf
 
 # Download nginx default sites
-wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
 
 # Enable default nginx sites
 ln -fs "/etc/nginx/sites-available/no-default.conf" "/etc/nginx/sites-enabled/no-default.conf"
