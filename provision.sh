@@ -45,7 +45,6 @@ mosquitto mosquitto-clients libmosquitto-dev
 pecl install Mosquitto-alpha
 
 cat > /etc/php/7.2/mods-available/mosquitto.ini << EOF
-#!/usr/bin/env bash
 ; configuration for php common module
 ; priority=10
 extension=mosquitto.so
