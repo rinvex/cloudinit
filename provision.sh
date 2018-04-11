@@ -44,6 +44,16 @@ mosquitto mosquitto-clients libmosquitto-dev
 # Install PHP-Mosquitto
 pecl install Mosquitto-alpha
 
+cat > /etc/php/7.2/mods-available/mosquitto.ini << EOF
+#!/usr/bin/env bash
+; configuration for php common module
+; priority=10
+extension=mosquitto.so
+EOF
+
+ln -s /etc/php/7.2/mods-available/mosquitto.ini /etc/php/7.2/cli/conf.d/20-mosquitto.ini
+ln -s /etc/php/7.2/mods-available/mosquitto.ini /etc/php/7.2/fpm/conf.d/20-mosquitto.ini
+
 # Install svgo npm package
 npm install -g svgo
 
