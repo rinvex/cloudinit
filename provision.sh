@@ -57,15 +57,15 @@ ln -s /etc/php/7.2/mods-available/mosquitto.ini /etc/php/7.2/fpm/conf.d/20-mosqu
 npm install -g svgo
 
 # Install Composer
-curl -sS https://getcomposer.org/installer | HOME="/home/coworkit" php -- --install-dir=/usr/local/bin --filename=composer
-chown coworkit:coworkit /home/coworkit/.composer -R
-chmod 775 /home/coworkit/.composer
+curl -sS https://getcomposer.org/installer | HOME="/home/rinvex" php -- --install-dir=/usr/local/bin --filename=composer
+chown rinvex:rinvex /home/rinvex/.composer -R
+chmod 775 /home/rinvex/.composer
 
 # Add Composer Global Bin To Path
-printf "\nPATH=\"/home/coworkit/.composer/vendor/bin:\$PATH\"\n" | tee -a /home/coworkit/.profile
+printf "\nPATH=\"/home/rinvex/.composer/vendor/bin:\$PATH\"\n" | tee -a /home/rinvex/.profile
 
 # Install Laravel Envoy & Installer
-sudo su coworkit <<'EOF'
+sudo su rinvex <<'EOF'
 /usr/local/bin/composer global require "laravel/envoy=~1.0"
 /usr/local/bin/composer global require "laravel/installer=~1.1"
 EOF
@@ -95,34 +95,34 @@ sed -i "s/;opcache.save_comments=.*/opcache.save_comments=1/" /etc/php/7.2/fpm/p
 
 # Replace default nginx config with optimized one
 rm -rvf /etc/nginx/nginx.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/nginx.conf -O /etc/nginx/nginx.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/nginx.conf -O /etc/nginx/nginx.conf
 
 # Download nginx snippets
-wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/snippets/headers.conf -O /etc/nginx/snippets/headers.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/snippets/expires.conf -O /etc/nginx/snippets/expires.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/snippets/fastcgi_params.conf -O /etc/nginx/snippets/fastcgi_params.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/snippets/cross-domain-insecure.conf -O /etc/nginx/snippets/cross-domain-insecure.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/headers.conf -O /etc/nginx/snippets/headers.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/expires.conf -O /etc/nginx/snippets/expires.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/fastcgi_params.conf -O /etc/nginx/snippets/fastcgi_params.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/snippets/cross-domain-insecure.conf -O /etc/nginx/snippets/cross-domain-insecure.conf
 
 # Download nginx default sites
-wget https://raw.githubusercontent.com/rinvex/cloudinit/coworkit/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/rinvex/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
 
 # Enable default nginx sites
 ln -fs "/etc/nginx/sites-available/no-default.conf" "/etc/nginx/sites-enabled/no-default.conf"
 
 # Set The PHP-FPM User
-sed -i "s/user = www-data/user = coworkit/" /etc/php/7.2/fpm/pool.d/www.conf
-sed -i "s/group = www-data/group = coworkit/" /etc/php/7.2/fpm/pool.d/www.conf
+sed -i "s/user = www-data/user = rinvex/" /etc/php/7.2/fpm/pool.d/www.conf
+sed -i "s/group = www-data/group = rinvex/" /etc/php/7.2/fpm/pool.d/www.conf
 
-sed -i "s/listen\.owner.*/listen.owner = coworkit/" /etc/php/7.2/fpm/pool.d/www.conf
-sed -i "s/listen\.group.*/listen.group = coworkit/" /etc/php/7.2/fpm/pool.d/www.conf
+sed -i "s/listen\.owner.*/listen.owner = rinvex/" /etc/php/7.2/fpm/pool.d/www.conf
+sed -i "s/listen\.group.*/listen.group = rinvex/" /etc/php/7.2/fpm/pool.d/www.conf
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.2/fpm/pool.d/www.conf
 
 # Add User To WWW-Data
-usermod -a -G www-data coworkit
-id coworkit
-groups coworkit
+usermod -a -G www-data rinvex
+id rinvex
+groups rinvex
 
 # Restart nginx and php7.2-fpm services
 /etc/init.d/nginx restart

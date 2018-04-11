@@ -134,7 +134,7 @@ if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
     exit 1
 fi
 
-cd /home/coworkit/\$1
+cd /home/rinvex/\$1
 git pull origin \$2
 
 # Generate javascript routes
