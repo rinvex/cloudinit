@@ -70,6 +70,10 @@ sudo su rinvex <<'EOF'
 /usr/local/bin/composer global require "laravel/installer=~1.1"
 EOF
 
+# Install PHPMyAdmin
+git clone --depth=1 --branch=STABLE https://github.com/phpmyadmin/phpmyadmin.git
+cd phpmyadmin && composer install
+
 # Remove default nginx host
 rm -rvf /etc/nginx/sites-enabled/default
 rm -rvf /etc/nginx/sites-available/default
