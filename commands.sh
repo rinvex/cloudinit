@@ -24,25 +24,44 @@ echo "Creating nginx configuration files..."
 # Create nginx site log directory
 mkdir /var/log/nginx/\$1 -p 2>/dev/null
 
-server="# Redirect all www. client requests non-www.
+server="# Redirect all www. client requests to non-www.
+# Always redirect to HTTPS regardless of the $scheme
 server {
-    listen 80;
-    listen [::]:80;
     server_name www.\$1;
-    return 301 https://\\\$host\\\$request_uri;
+    return 301 https://\$1\\\$request_uri;
 }
 
+# Catch HTTP requests without www. and redirect to HTTPS
 server {
     listen 80;
     listen [::]:80;
 
     server_name \$1;
-    root "\$2";
 
-    # Redirect HTTP client requests to HTTPS
+    # Redirect to HTTPS if not behind secured load balancer
     if (\\\$http_x_forwarded_proto != "https") {
-        return 301 https://\\\$host\\\$request_uri;
+        return 301 https://\$1\\\$request_uri;
     }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name \$1;
+    root "\$2";
+    charset utf-8;
+
+    # Include nginx ssl config
+    include /etc/nginx/snippets/ssl.conf;
+    include /etc/nginx/snippets/ssl-stapling.conf;
+
+    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
+    ssl_certificate /etc/nginx/ssl/\$1/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/\$1/privkey.pem;
+
+    ## verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/nginx/ssl/\$1/fullchain.pem;
 
     # Custom 404 page
     error_page 404 /index.php;
@@ -55,8 +74,6 @@ server {
 
     index index.html index.htm index.php;
 
-    charset utf-8;
-
     location / {
         try_files \\\$uri \\\$uri/ /index.php?\\\$query_string;
     }
@@ -64,13 +81,13 @@ server {
     location = /favicon.ico { access_log off; log_not_found off; }
     location = /robots.txt  { access_log off; log_not_found off; }
 
-    access_log  /var/log/nginx/\$1/access.log;
-    error_log  /var/log/nginx/\$1/error.log error;
+    access_log /var/log/nginx/\$1/access.log main;
+    error_log /var/log/nginx/\$1/error.log error;
 
     location ~ \.php\$ {
+        fastcgi_index index.php;
         fastcgi_split_path_info ^(.+\.php)(/.+)\$;
         fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
-        fastcgi_index index.php;
         include /etc/nginx/snippets/fastcgi_params.conf;
     }
 
@@ -82,6 +99,31 @@ server {
 
 echo "\$server" > "/etc/nginx/sites-available/\$1"
 ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
+
+# Set letsencrypt environment variables
+if [ -z "$AWS_ACCESS_KEY_ID" ]
+then
+    echo "AWS_ACCESS_KEY_ID was not set, please enter the path: "
+    read aws_access_key
+    export AWS_ACCESS_KEY_ID=$aws_access_key
+fi
+
+if [ -z "$AWS_SECRET_ACCESS_KEY" ]
+then
+    echo "AWS_SECRET_ACCESS_KEY was not set, please enter the path: "
+    read aws_secret_key
+    export AWS_SECRET_ACCESS_KEY=$aws_secret_key
+fi
+
+# Generate letsencrypt certificates
+acme.sh --issue --dns dns_aws -d \$1 -d '*.\$1'
+
+acme.sh --install-cert -d \$1 \
+--cert-file /etc/nginx/ssl/\$1/cert.pem \
+--key-file /etc/nginx/ssl/\$1/privkey.pem \
+--ca-file /etc/nginx/ssl/\$1/request.csr \
+--fullchain-file /etc/nginx/ssl/\$1/fullchain.pem \
+--reloadcmd "/etc/init.d/nginx restart"
 
 # Start nginx service
 /etc/init.d/nginx restart
@@ -108,6 +150,9 @@ if [[ \$# -eq 0 ]] || [[ -z "\$1" ]]; then
     echo "Invalid arguments provided! Usage: serve domain.ext"
     exit 1
 fi
+
+echo "Removing letsencrypt..."
+rm -rvf /etc/nginx/ssl/\$1
 
 echo "Removing virtual host..."
 rm -rvf /etc/nginx/sites-enabled/\$1

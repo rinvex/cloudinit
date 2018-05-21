@@ -124,6 +124,10 @@ usermod -a -G www-data rinvex
 id rinvex
 groups rinvex
 
+# Install letsencrypt client
+git clone https://github.com/Neilpang/acme.sh.git
+cd acme.sh && ./acme.sh --install  --accountemail  "a.omran@rinvex.com"
+
 # Restart nginx and php7.2-fpm services
 /etc/init.d/nginx restart
 /etc/init.d/php7.2-fpm restart
