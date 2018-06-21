@@ -33,7 +33,7 @@ curl --silent --location https://deb.nodesource.com/setup_9.x | sudo -E bash -
 apt-get update
 
 # Install Some Basic Packages
-apt-get install --no-install-recommends --no-install-suggests -y make \
+apt-get install --no-install-recommends --no-install-suggests -y make curl \
 locales build-essential libpcre3-dev python2.7-dev ntp python-pip whois gcc supervisor nginx \
 sqlite3 nodejs wkhtmltopdf libmcrypt4 zip unzip git jpegoptim optipng pngquant gifsicle \
 php7.2-cli php7.2-dev php7.2-pgsql php7.2-sqlite3 php7.2-gd php7.2-fpm php7.2-xml \
