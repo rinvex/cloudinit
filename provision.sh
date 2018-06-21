@@ -33,7 +33,8 @@ curl --silent --location https://deb.nodesource.com/setup_9.x | sudo -E bash -
 apt-get update
 
 # Install Some Basic Packages
-apt-get install -y build-essential libpcre3-dev python2.7-dev ntp python-pip whois gcc supervisor \
+apt-get install --no-install-recommends --no-install-suggests -y \
+locales build-essential libpcre3-dev python2.7-dev ntp python-pip whois gcc supervisor \
 nginx sqlite3 nodejs wkhtmltopdf libmcrypt4 unzip make jpegoptim optipng pngquant gifsicle \
 php7.2-cli php7.2-dev php7.2-pgsql php7.2-sqlite3 php7.2-gd php7.2-fpm php7.2-xml \
 php7.2-curl php7.2-memcached php7.2-imap php7.2-mysql php7.2-mbstring \
@@ -135,3 +136,4 @@ cd acme.sh && ./acme.sh --install  --accountemail  "a.omran@rinvex.com"
 # Clean Up
 apt-get -y autoremove
 apt-get -y clean
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
