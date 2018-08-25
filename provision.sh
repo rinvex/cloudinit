@@ -129,8 +129,8 @@ id rinvex
 groups rinvex
 
 # Install letsencrypt client
-git clone https://github.com/Neilpang/acme.sh.git
-cd acme.sh && ./acme.sh --install  --accountemail  "aomran@rinvex.com"
+curl https://get.acme.sh | sh
+acme.sh --update-account --accountemail 'aomran@rinvex.com'
 
 # Restart nginx and php${PHP}-fpm services
 /etc/init.d/nginx restart
