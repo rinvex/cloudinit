@@ -5,7 +5,7 @@ set -e
 export DEBIAN_FRONTEND=noninteractive
 
 # Software Versions
-PHP = 7.2
+PHP='7.2'
 
 # Update Package List
 apt-get update
@@ -130,7 +130,7 @@ groups rinvex
 
 # Install letsencrypt client
 git clone https://github.com/Neilpang/acme.sh.git
-cd acme.sh && ./acme.sh --install  --accountemail  "a.omran@rinvex.com"
+cd acme.sh && ./acme.sh --install  --accountemail  "aomran@rinvex.com"
 
 # Restart nginx and php${PHP}-fpm services
 /etc/init.d/nginx restart
