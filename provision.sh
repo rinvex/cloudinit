@@ -43,20 +43,9 @@ sqlite3 nodejs wkhtmltopdf libmcrypt4 zip unzip git jpegoptim optipng pngquant g
 php${PHP}-cli php${PHP}-dev php${PHP}-pgsql php${PHP}-sqlite3 php${PHP}-gd php${PHP}-fpm php${PHP}-xml \
 php${PHP}-curl php${PHP}-memcached php${PHP}-imap php${PHP}-mysql php${PHP}-mbstring php-pear  \
 php${PHP}-zip php${PHP}-bcmath php${PHP}-soap php${PHP}-intl php${PHP}-readline \
-php${PHP}-redis mysql-server redis-server unattended-upgrades \
-mosquitto mosquitto-clients libmosquitto-dev
+php${PHP}-redis mysql-server redis-server unattended-upgrades
 
 pecl channel-update pecl.php.net
-pecl install -o -f imagick Mosquitto-alpha
-
-cat > /etc/php/${PHP}/mods-available/mosquitto.ini << EOF
-; configuration for php common module
-; priority=10
-extension=mosquitto.so
-EOF
-
-ln -s /etc/php/${PHP}/mods-available/mosquitto.ini /etc/php/${PHP}/cli/conf.d/20-mosquitto.ini
-ln -s /etc/php/${PHP}/mods-available/mosquitto.ini /etc/php/${PHP}/fpm/conf.d/20-mosquitto.ini
 
 # Install svgo npm package
 npm install -g svgo
