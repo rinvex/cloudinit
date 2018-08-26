@@ -51,13 +51,11 @@ pecl channel-update pecl.php.net
 npm install -g svgo
 
 # Install Composer
-echo "Install Composer\n"
-print "Install Composer\n"
+echo "Install Composer"
 curl -sS https://getcomposer.org/installer | HOME="/home/rinvex" php -- --install-dir=/usr/local/bin --filename=composer
 chown rinvex:rinvex /home/rinvex/.composer -R
 chmod 775 /home/rinvex/.composer
-echo "End Install Composer\n"
-print "End Install Composer\n"
+echo "End Install Composer"
 
 # Add Composer Global Bin To Path
 printf "\nPATH=\"/home/rinvex/.composer/vendor/bin:\$PATH\"\n" | tee -a /home/rinvex/.profile
