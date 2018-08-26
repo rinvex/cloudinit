@@ -6,6 +6,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Software Versions
 PHP='7.2'
+#ENV PHP_VERSION 7.2.9
 
 # Update Package List
 apt-get update
@@ -40,13 +41,13 @@ apt-get install --no-install-recommends --no-install-suggests -y make curl \
 locales build-essential libpcre3-dev python2.7-dev ntp python-pip whois gcc supervisor nginx \
 sqlite3 nodejs wkhtmltopdf libmcrypt4 zip unzip git jpegoptim optipng pngquant gifsicle \
 php${PHP}-cli php${PHP}-dev php${PHP}-pgsql php${PHP}-sqlite3 php${PHP}-gd php${PHP}-fpm php${PHP}-xml \
-php${PHP}-curl php${PHP}-memcached php${PHP}-imap php${PHP}-mysql php${PHP}-mbstring \
+php${PHP}-curl php${PHP}-memcached php${PHP}-imap php${PHP}-mysql php${PHP}-mbstring php${PHP}-pear  \
 php${PHP}-zip php${PHP}-bcmath php${PHP}-soap php${PHP}-intl php${PHP}-readline \
 php${PHP}-redis mysql-server redis-server unattended-upgrades \
 mosquitto mosquitto-clients libmosquitto-dev
 
-# Install PHP-Mosquitto
-pecl install Mosquitto-alpha
+pecl channel-update pecl.php.net
+pecl install -o -f imagick Mosquitto-alpha
 
 cat > /etc/php/${PHP}/mods-available/mosquitto.ini << EOF
 ; configuration for php common module
@@ -129,9 +130,10 @@ id rinvex
 groups rinvex
 
 # Install letsencrypt client
+sudo su rinvex <<'EOF'
 curl -sS https://get.acme.sh | sh
-echo 'acmeeeee!'
 acme.sh --update-account --accountemail 'aomran@rinvex.com'
+EOF
 
 # Restart nginx and php${PHP}-fpm services
 /etc/init.d/nginx restart
