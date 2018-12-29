@@ -107,14 +107,14 @@ if [ \$3 = "dns_aws" ]; then
     then
         echo "AWS_ACCESS_KEY_ID was not set, please enter the path: "
         read aws_access_key
-        export AWS_ACCESS_KEY_ID=$aws_access_key
+        export AWS_ACCESS_KEY_ID=\$aws_access_key
     fi
 
     if [ -z "$AWS_SECRET_ACCESS_KEY" ]
     then
         echo "AWS_SECRET_ACCESS_KEY was not set, please enter the path: "
         read aws_secret_key
-        export AWS_SECRET_ACCESS_KEY=$aws_secret_key
+        export AWS_SECRET_ACCESS_KEY=\$aws_secret_key
     fi
 fi
 
@@ -123,14 +123,14 @@ if [ \$3 = "dns_cf" ]; then
     then
         echo "CF_Key was not set, please enter the path: "
         read cf_key_var
-        export CF_Key=$cf_key_var
+        export CF_Key=\$cf_key_var
     fi
 
     if [ -z "$CF_Email" ]
     then
         echo "CF_Email was not set, please enter the path: "
         read cf_email_var
-        export CF_Email=$cf_email_var
+        export CF_Email=\$cf_email_var
     fi
 fi
 
@@ -139,7 +139,7 @@ if [ \$3 = "dns_dgon" ]; then
     then
         echo "DO_API_KEY was not set, please enter the path: "
         read do_api_key_var
-        export DO_API_KEY=$do_api_key_var
+        export DO_API_KEY=\$do_api_key_var
     fi
 fi
 
