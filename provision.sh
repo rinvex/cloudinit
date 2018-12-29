@@ -31,7 +31,7 @@ sed -i "s/PermitRootLogin .*/PermitRootLogin no/" /etc/ssh/sshd_config
 # Install Some PPAs
 apt-add-repository ppa:ondrej/php -y
 apt-add-repository ppa:nginx/stable -y
-curl --silent --location https://deb.nodesource.com/setup_9.x | sudo -E bash -
+curl --silent --location https://deb.nodesource.com/setup_10.x | sudo -E bash -
 
 # Update Package Lists
 apt-get update
