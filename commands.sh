@@ -24,6 +24,7 @@ echo "Creating nginx configuration files..."
 
 # Create nginx site log directory
 mkdir /var/log/nginx/\$1 -p 2>/dev/null
+mkdir /etc/nginx/ssl/\$1 -p 2>/dev/null
 
 server="# Redirect all www. client requests to non-www.
 # Always redirect to HTTPS regardless of the $scheme
