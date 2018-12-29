@@ -16,7 +16,7 @@ fi
 
 if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]] || [[ -z "\$3" ]]; then
     echo "Invalid arguments provided! Usage: serve [domain] [path] [cert-dns-plugin]"
-    echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory aws"
+    echo "serve domain.ext /path/to/root/public/directory dns_aws"
     exit 1
 fi
 
