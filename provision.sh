@@ -58,7 +58,7 @@ chmod 775 /home/rinvex/.composer
 echo "End Install Composer"
 
 # Add Composer Global Bin To Path
-printf "\nPATH=\"/home/rinvex/.composer/vendor/bin:\$PATH\"\n" | tee -a /home/rinvex/.profile
+printf "\nexport PATH=\"/home/rinvex/.composer/vendor/bin:\$PATH\"\n" | tee -a /home/rinvex/.bashrc
 
 # Install Laravel Envoy & Installer
 sudo su rinvex <<'EOF'
@@ -125,7 +125,7 @@ git clone https://github.com/Neilpang/acme.sh.git /root/acme.sh
 cd /root/acme.sh && ./acme.sh --install --accountemail 'aomran@rinvex.com'
 
 # Add acme.sh To Path
-printf "\nPATH=\"/root/acme.sh:\$PATH\"\n" | tee -a /root/.profile
+printf "\nexport PATH=\"/.acme.sh:\$PATH\"\n" | tee -a /root/.bashrc
 
 # Restart nginx and php${PHP}-fpm services
 /etc/init.d/nginx restart
