@@ -106,15 +106,15 @@ if [ \$3 = "dns_aws" ]; then
     if [ -z "$AWS_ACCESS_KEY_ID" ]
     then
         echo "AWS_ACCESS_KEY_ID was not set, please enter the path: "
-        read aws_access_key
-        export AWS_ACCESS_KEY_ID=\$aws_access_key
+        read aws_access_key_id_var
+        export AWS_ACCESS_KEY_ID=\$aws_access_key_id_var
     fi
 
     if [ -z "$AWS_SECRET_ACCESS_KEY" ]
     then
         echo "AWS_SECRET_ACCESS_KEY was not set, please enter the path: "
-        read aws_secret_key
-        export AWS_SECRET_ACCESS_KEY=\$aws_secret_key
+        read aws_secret_access_key_var
+        export AWS_SECRET_ACCESS_KEY=\$aws_secret_access_key_var
     fi
 fi
 
