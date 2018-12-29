@@ -1,6 +1,6 @@
 # cloud-init
 
-When provisioning a new Ubuntu 16.04 server on the cloud, write the following code in the **User data** field at your cloud service provider provisioning page. This is applicable for both AWS EC2 & DigitalOcean Droplet instances:
+When provisioning a new Ubuntu 18.04 server on the cloud, write the following code in the **User data** field at your cloud service provider provisioning page. This is applicable for both AWS EC2 & DigitalOcean Droplet instances:
 
 ```shell
 #cloud-config
