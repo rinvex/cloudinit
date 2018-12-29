@@ -14,8 +14,9 @@ if [[ \$EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]]; then
-    echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory"
+if [[ \$# -eq 0 ]] || [[ -z "\$1" ]] || [[ -z "\$2" ]] || [[ -z "\$3" ]]; then
+    echo "Invalid arguments provided! Usage: serve [domain] [path] [cert-dns-plugin]"
+    echo "Invalid arguments provided! Usage: serve domain.ext /path/to/root/public/directory aws"
     exit 1
 fi
 
@@ -101,22 +102,49 @@ echo "\$server" > "/etc/nginx/sites-available/\$1"
 ln -fs "/etc/nginx/sites-available/\$1" "/etc/nginx/sites-enabled/\$1"
 
 # Set letsencrypt environment variables
-if [ -z "$AWS_ACCESS_KEY_ID" ]
-then
-    echo "AWS_ACCESS_KEY_ID was not set, please enter the path: "
-    read aws_access_key
-    export AWS_ACCESS_KEY_ID=$aws_access_key
+if [ \$3 = "dns_aws" ]; then
+    if [ -z "$AWS_ACCESS_KEY_ID" ]
+    then
+        echo "AWS_ACCESS_KEY_ID was not set, please enter the path: "
+        read aws_access_key
+        export AWS_ACCESS_KEY_ID=$aws_access_key
+    fi
+
+    if [ -z "$AWS_SECRET_ACCESS_KEY" ]
+    then
+        echo "AWS_SECRET_ACCESS_KEY was not set, please enter the path: "
+        read aws_secret_key
+        export AWS_SECRET_ACCESS_KEY=$aws_secret_key
+    fi
 fi
 
-if [ -z "$AWS_SECRET_ACCESS_KEY" ]
-then
-    echo "AWS_SECRET_ACCESS_KEY was not set, please enter the path: "
-    read aws_secret_key
-    export AWS_SECRET_ACCESS_KEY=$aws_secret_key
+if [ \$3 = "dns_cf" ]; then
+    if [ -z "$CF_Key" ]
+    then
+        echo "CF_Key was not set, please enter the path: "
+        read cf_key_var
+        export CF_Key=$cf_key_var
+    fi
+
+    if [ -z "$CF_Email" ]
+    then
+        echo "CF_Email was not set, please enter the path: "
+        read cf_email_var
+        export CF_Email=$cf_email_var
+    fi
+fi
+
+if [ \$3 = "dns_dgon" ]; then
+    if [ -z "$DO_API_KEY" ]
+    then
+        echo "DO_API_KEY was not set, please enter the path: "
+        read do_api_key_var
+        export DO_API_KEY=$do_api_key_var
+    fi
 fi
 
 # Generate letsencrypt certificates
-acme.sh --issue --dns dns_aws -d \$1 -d '*.\$1'
+acme.sh --issue --dns \$3 -d \$1 -d '*.\$1'
 
 acme.sh --install-cert -d \$1 \
 --cert-file /etc/nginx/ssl/\$1/cert.pem \
