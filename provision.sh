@@ -124,6 +124,9 @@ groups rinvex
 git clone https://github.com/Neilpang/acme.sh.git /root/acme.sh
 cd /root/acme.sh && ./acme.sh --install --accountemail 'aomran@rinvex.com'
 
+# Add acme.sh To Path
+printf "\nPATH=\"\$HOME/acme.sh:\$PATH\"\n" | tee -a \$HOME/.profile
+
 # Restart nginx and php${PHP}-fpm services
 /etc/init.d/nginx restart
 /etc/init.d/php${PHP}-fpm restart
