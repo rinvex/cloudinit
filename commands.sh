@@ -144,7 +144,7 @@ if [ \$3 = "dns_dgon" ]; then
 fi
 
 # Generate letsencrypt certificates
-acme.sh --issue --dns \$3 -d \$1 -d '*.\$1'
+acme.sh --issue --dns \$3 -d \$1 -d *.\$1
 
 acme.sh --install-cert -d \$1 \
 --cert-file /etc/nginx/ssl/\$1/cert.pem \
