@@ -124,6 +124,9 @@ usermod -a -G www-data rinvex
 id rinvex
 groups rinvex
 
+# Generate Strong Diffie-Hellman Group
+openssl dhparam -out /etc/nginx/dhparam.pem 2048
+
 # Install letsencrypt client
 git clone https://github.com/Neilpang/acme.sh.git /root/acme.sh
 cd /root/acme.sh && ./acme.sh --install --accountemail 'aomran@rinvex.com'
