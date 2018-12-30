@@ -119,6 +119,10 @@ sed -i "s/listen\.owner.*/listen.owner = rinvex/" /etc/php/${PHP}/fpm/pool.d/www
 sed -i "s/listen\.group.*/listen.group = rinvex/" /etc/php/${PHP}/fpm/pool.d/www.conf
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/${PHP}/fpm/pool.d/www.conf
 
+# Add User To WWW-Data
+usermod -a -G www-data rinvex
+id rinvex
+groups rinvex
 
 # Install letsencrypt client
 git clone https://github.com/Neilpang/acme.sh.git /root/acme.sh
