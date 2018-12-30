@@ -100,6 +100,8 @@ wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/f
 wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/cross-domain-fonts.conf -O /etc/nginx/snippets/cross-domain-fonts.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/protect-system-files.conf -O /etc/nginx/snippets/protect-system-files.conf
 wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/cross-domain-insecure.conf -O /etc/nginx/snippets/cross-domain-insecure.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/ssl-stapling.conf -O /etc/nginx/snippets/ssl-stapling.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/ssl.conf -O /etc/nginx/snippets/ssl.conf
 
 # Download nginx default sites
 wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
