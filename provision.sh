@@ -132,7 +132,7 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/privat
 
 # Add letsencrypt renewal and composer self-update cronjobs
 sudo su <<'EOF'
-crontab -l | { cat; echo "0 0 * * * \"/.acme.sh\"/acme.sh --cron --home \"/.acme.sh\" > /dev/null"; } | crontab -
+crontab -l | { cat; echo "0 0 * * * \"/.acme.sh\"/acme.sh --cron --home \"/.acme.sh\" >> /var/log/acme.log 2>&1"; } | crontab -
 crontab -l | { cat; echo "0 0 * * * /usr/local/bin/composer self-update >> /var/log/composer.log 2>&1"; } | crontab -
 EOF
 
