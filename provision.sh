@@ -105,9 +105,11 @@ wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/s
 
 # Download nginx default sites
 wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/sites-available/ssl.no-default.conf -O /etc/nginx/sites-available/ssl.no-default.conf
 
 # Enable default nginx sites
 ln -fs "/etc/nginx/sites-available/no-default.conf" "/etc/nginx/sites-enabled/no-default.conf"
+ln -fs "/etc/nginx/sites-available/ssl.no-default.conf" "/etc/nginx/sites-enabled/ssl.no-default.conf"
 
 # Set The PHP-FPM User
 sed -i "s/user = www-data/user = rinvex/" /etc/php/${PHP}/fpm/pool.d/www.conf
@@ -121,6 +123,18 @@ sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/${PHP}/fpm/pool.d/www.co
 usermod -a -G www-data rinvex
 id rinvex
 groups rinvex
+
+# Generate Strong Diffie-Hellman Group
+openssl dhparam -out /etc/nginx/dhparam.pem 2048
+
+# Generate default ssl certificate
+gssl $(curl http://169.254.169.254/latest/meta-data/public-ipv4 -s) default
+
+# Add letsencrypt renewal and composer self-update cronjobs
+sudo su <<'EOF'
+crontab -l | { cat; echo "0 0 * * * "/.acme.sh"/acme.sh --cron --home "/.acme.sh" > /dev/null"; } | crontab -
+crontab -l | { cat; echo "0 0 * * * /usr/local/bin/composer self-update >> /var/log/composer.log 2>&1"; } | crontab -
+EOF
 
 # Install letsencrypt client
 git clone https://github.com/Neilpang/acme.sh.git /root/acme.sh
