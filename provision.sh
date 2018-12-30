@@ -125,7 +125,7 @@ id rinvex
 groups rinvex
 
 # Generate Strong Diffie-Hellman Group
-openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
+openssl dhparam -out /etc/ssl/dhparam.pem 2048
 
 # Generate default ssl certificate
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj "/C=US/ST=California/O=Global Security/L=San Francisco/CN=rinvex.com/OU=IT Department"
