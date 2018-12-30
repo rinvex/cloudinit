@@ -128,8 +128,7 @@ groups rinvex
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
 # Generate default ssl certificate
-sudo mkdir -p "/etc/nginx/ssl/default"
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/default/nginx-selfsigned.key -out /etc/nginx/ssl/default/nginx-selfsigned.crt -subj "/C=US/ST=California/O=Global Security/L=San Francisco/CN=rinvex.com/OU=IT Department"
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj "/C=US/ST=California/O=Global Security/L=San Francisco/CN=rinvex.com/OU=IT Department"
 
 # Add letsencrypt renewal and composer self-update cronjobs
 sudo su <<'EOF'
