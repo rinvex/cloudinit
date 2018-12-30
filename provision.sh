@@ -128,7 +128,14 @@ groups rinvex
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
 # Generate default ssl certificate
-gssl $(curl http://169.254.169.254/latest/meta-data/public-ipv4 -s) default
+sudo mkdir -p "/etc/nginx/ssl/default"
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/default/nginx-selfsigned.key -out /etc/ssl/default/nginx-selfsigned.crt -subj "/C=US/ST=California/O=Global Security/L=San Francisco/CN=rinvex.com/OU=IT Department"
+
+# Add letsencrypt renewal and composer self-update cronjobs
+sudo su <<'EOF'
+crontab -l | { cat; echo "0 0 * * * \"/.acme.sh\"/acme.sh --cron --home \"/.acme.sh\" > /dev/null"; } | crontab -
+crontab -l | { cat; echo "0 0 * * * /usr/local/bin/composer self-update >> /var/log/composer.log 2>&1"; } | crontab -
+EOF
 
 # Install letsencrypt client
 git clone https://github.com/Neilpang/acme.sh.git /root/acme.sh
