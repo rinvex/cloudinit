@@ -105,7 +105,7 @@ wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/snippets/s
 
 # Download nginx default sites
 wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/sites-available/no-default.conf -O /etc/nginx/sites-available/no-default.conf
-wget https://raw.githubusercontent.com/rinvex/cloudinit/master/nginx/sites-available/ssl.no-default.conf -O /etc/nginx/sites-available/ssl.no-default.conf
+wget https://raw.githubusercontent.com/rinvex/cloudinit/develop/nginx/sites-available/ssl.no-default.conf -O /etc/nginx/sites-available/ssl.no-default.conf
 
 # Enable default nginx sites
 ln -fs "/etc/nginx/sites-available/no-default.conf" "/etc/nginx/sites-enabled/no-default.conf"
