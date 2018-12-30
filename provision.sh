@@ -127,6 +127,9 @@ groups rinvex
 # Generate Strong Diffie-Hellman Group
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
+# Generate default ssl certificate
+gssl $(curl http://169.254.169.254/latest/meta-data/public-ipv4 -s) default
+
 # Install letsencrypt client
 git clone https://github.com/Neilpang/acme.sh.git /root/acme.sh
 cd /root/acme.sh && ./acme.sh --install --accountemail 'aomran@rinvex.com'
