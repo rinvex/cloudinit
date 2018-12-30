@@ -132,7 +132,7 @@ gssl $(curl http://169.254.169.254/latest/meta-data/public-ipv4 -s) default
 
 # Add letsencrypt renewal and composer self-update cronjobs
 sudo su <<'EOF'
-crontab -l | { cat; echo "0 0 * * * "/.acme.sh"/acme.sh --cron --home "/.acme.sh" > /dev/null"; } | crontab -
+crontab -l | { cat; echo "0 0 * * * \"/.acme.sh\"/acme.sh --cron --home \"/.acme.sh\" > /dev/null"; } | crontab -
 crontab -l | { cat; echo "0 0 * * * /usr/local/bin/composer self-update >> /var/log/composer.log 2>&1"; } | crontab -
 EOF
 
