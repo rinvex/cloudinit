@@ -119,22 +119,6 @@ sed -i "s/listen\.owner.*/listen.owner = rinvex/" /etc/php/${PHP}/fpm/pool.d/www
 sed -i "s/listen\.group.*/listen.group = rinvex/" /etc/php/${PHP}/fpm/pool.d/www.conf
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/${PHP}/fpm/pool.d/www.conf
 
-# Add User To WWW-Data
-usermod -a -G www-data rinvex
-id rinvex
-groups rinvex
-
-# Generate Strong Diffie-Hellman Group
-openssl dhparam -out /etc/nginx/dhparam.pem 2048
-
-# Generate default ssl certificate
-gssl $(curl http://169.254.169.254/latest/meta-data/public-ipv4 -s) default
-
-# Add letsencrypt renewal and composer self-update cronjobs
-sudo su <<'EOF'
-crontab -l | { cat; echo "0 0 * * * \"/.acme.sh\"/acme.sh --cron --home \"/.acme.sh\" > /dev/null"; } | crontab -
-crontab -l | { cat; echo "0 0 * * * /usr/local/bin/composer self-update >> /var/log/composer.log 2>&1"; } | crontab -
-EOF
 
 # Install letsencrypt client
 git clone https://github.com/Neilpang/acme.sh.git /root/acme.sh
