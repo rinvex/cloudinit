@@ -42,7 +42,7 @@ locales build-essential libpcre3-dev python2.7-dev ntp python-pip whois gcc supe
 sqlite3 nodejs wkhtmltopdf libmcrypt4 zip unzip git jpegoptim optipng pngquant gifsicle \
 php${PHP}-cli php${PHP}-dev php${PHP}-pgsql php${PHP}-sqlite3 php${PHP}-gd php${PHP}-fpm php${PHP}-xml \
 php${PHP}-curl php${PHP}-memcached php${PHP}-imap php${PHP}-mysql php${PHP}-mbstring php-pear  \
-php${PHP}-zip php${PHP}-bcmath php${PHP}-soap php${PHP}-intl php${PHP}-readline \
+php${PHP}-zip php${PHP}-bcmath php${PHP}-soap php${PHP}-intl php${PHP}-readline php${PHP}-pcntl \
 php${PHP}-redis mysql-server redis-server unattended-upgrades php${PHP}-imagick
 
 pecl channel-update pecl.php.net
