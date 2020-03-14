@@ -5,8 +5,8 @@ set -e
 export DEBIAN_FRONTEND=noninteractive
 
 # Software Versions
-PHP='7.3'
-#ENV PHP_VERSION 7.3.4
+PHP='7.4'
+#ENV PHP_VERSION 7.4.3
 
 # Update Package List
 apt-get update

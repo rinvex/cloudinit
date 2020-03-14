@@ -89,7 +89,7 @@ server {
     location ~ \.php\$ {
         fastcgi_index index.php;
         fastcgi_split_path_info ^(.+\.php)(/.+)\$;
-        fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
         include /etc/nginx/snippets/fastcgi_params.conf;
     }
 
@@ -240,7 +240,7 @@ if [[ -f artisan ]]; then
 fi
 
 # Restart php service to flush OPCache
-/etc/init.d/php7.3-fpm restart
+/etc/init.d/php7.4-fpm restart
 
 # Restart all queue workers
 php artisan queue:restart
