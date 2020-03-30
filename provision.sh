@@ -39,7 +39,7 @@ apt-get update
 # Install Some Basic Packages
 apt-get install --no-install-recommends --no-install-suggests -y make curl \
 locales build-essential libpcre3-dev python2.7-dev ntp python-pip whois gcc supervisor nginx \
-sqlite3 nodejs wkhtmltopdf libmcrypt4 zip unzip git jpegoptim optipng pngquant gifsicle \
+sqlite3 nodejs wkhtmltopdf libmcrypt4 zip unzip git git-flow jpegoptim optipng pngquant gifsicle \
 php${PHP}-cli php${PHP}-dev php${PHP}-pgsql php${PHP}-sqlite3 php${PHP}-gd php${PHP}-fpm php${PHP}-xml \
 php${PHP}-curl php${PHP}-memcached php${PHP}-imap php${PHP}-mysql php${PHP}-mbstring php-pear  \
 php${PHP}-zip php${PHP}-bcmath php${PHP}-soap php${PHP}-intl php${PHP}-readline php${PHP}-pcntl \
